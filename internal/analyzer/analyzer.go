@@ -7,9 +7,11 @@ package analyzer
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/csnp/qramm-cryptodeps/internal/analyzer/ondemand"
+	"github.com/csnp/qramm-cryptodeps/internal/analyzer/reachability"
 	"github.com/csnp/qramm-cryptodeps/internal/database"
 	"github.com/csnp/qramm-cryptodeps/internal/manifest"
 	"github.com/csnp/qramm-cryptodeps/pkg/types"
@@ -24,10 +26,11 @@ type Analyzer struct {
 
 // Options configures the analyzer behavior.
 type Options struct {
-	Offline     bool   // Only use database, no on-demand analysis
-	Deep        bool   // Force on-demand analysis for all packages
-	RiskFilter  string // Filter by risk level (vulnerable, partial, all)
-	MinSeverity string // Minimum severity to report
+	Offline      bool   // Only use database, no on-demand analysis
+	Deep         bool   // Force on-demand analysis for all packages
+	Reachability bool   // Perform reachability analysis to determine actual crypto usage
+	RiskFilter   string // Filter by risk level (vulnerable, partial, all)
+	MinSeverity  string // Minimum severity to report
 }
 
 // New creates a new analyzer with the given database and options.
@@ -89,7 +92,85 @@ func (a *Analyzer) Analyze(path string) (*types.ScanResult, error) {
 		}
 	}
 
+	// Perform reachability analysis if enabled and ecosystem supports it
+	if a.options.Reachability && m.Ecosystem == types.EcosystemGo {
+		a.performReachabilityAnalysis(result, path)
+	}
+
+	// Generate hints based on results
+	result.Hints = a.generateHints(result)
+
 	return result, nil
+}
+
+// performReachabilityAnalysis analyzes the user's source code to determine
+// which crypto functions are actually reachable from their code.
+func (a *Analyzer) performReachabilityAnalysis(result *types.ScanResult, projectPath string) {
+	// Get the project directory (parent of manifest)
+	projectDir := filepath.Dir(result.Manifest)
+	if projectDir == "" || projectDir == "." {
+		projectDir = projectPath
+	}
+
+	// Create reachability analyzer
+	reachAnalyzer := reachability.NewAnalyzer(projectDir)
+
+	// Perform analysis
+	traces, err := reachAnalyzer.Analyze()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: reachability analysis failed: %v\n", err)
+		return
+	}
+
+	// Mark that reachability was analyzed
+	result.Summary.ReachabilityAnalyzed = true
+
+	// Classify all crypto findings by reachability
+	for i := range result.Dependencies {
+		dep := &result.Dependencies[i]
+		if dep.Analysis == nil || len(dep.Analysis.Crypto) == 0 {
+			continue
+		}
+
+		// Classify each crypto usage
+		dep.Analysis.Crypto = reachability.ClassifyFindings(dep.Analysis.Crypto, traces)
+
+		// Update summary stats
+		for _, crypto := range dep.Analysis.Crypto {
+			switch crypto.Reachability {
+			case types.ReachabilityConfirmed:
+				result.Summary.ConfirmedCrypto++
+			case types.ReachabilityReachable:
+				result.Summary.ReachableCrypto++
+			case types.ReachabilityAvailable:
+				result.Summary.AvailableCrypto++
+			}
+		}
+	}
+}
+
+// generateHints creates actionable suggestions based on scan results.
+func (a *Analyzer) generateHints(result *types.ScanResult) []string {
+	hints := make([]string, 0)
+
+	// Hint: suggest --deep when many packages not in database
+	if result.Summary.NotInDatabase > 0 && !a.options.Deep {
+		pct := float64(result.Summary.NotInDatabase) / float64(result.Summary.TotalDependencies) * 100
+		if pct >= 50 || (result.Summary.WithCrypto == 0 && result.Summary.NotInDatabase > 5) {
+			hints = append(hints, fmt.Sprintf(
+				"%d packages (%.0f%%) not in database. Run with --deep for source code analysis.",
+				result.Summary.NotInDatabase, pct))
+		}
+	}
+
+	// Hint: no crypto found but packages exist
+	if result.Summary.WithCrypto == 0 && result.Summary.TotalDependencies > 0 {
+		if result.Summary.NotInDatabase == result.Summary.TotalDependencies {
+			hints = append(hints, "No crypto findings. All packages are unknown - try --deep to analyze source code.")
+		}
+	}
+
+	return hints
 }
 
 // analyzeDependency analyzes a single dependency.

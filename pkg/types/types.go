@@ -72,18 +72,42 @@ const (
 	ConfidenceLow Confidence = "low"
 )
 
+// Reachability indicates whether crypto is actually used by the project.
+type Reachability string
+
+const (
+	// ReachabilityConfirmed means direct call from user code to crypto function.
+	ReachabilityConfirmed Reachability = "CONFIRMED"
+	// ReachabilityReachable means crypto is in the call graph from user code.
+	ReachabilityReachable Reachability = "REACHABLE"
+	// ReachabilityAvailable means crypto exists in dependency but no path from user code.
+	ReachabilityAvailable Reachability = "AVAILABLE"
+	// ReachabilityUnknown means reachability could not be determined.
+	ReachabilityUnknown Reachability = "UNKNOWN"
+)
+
+// CallTrace represents a path from user code to crypto usage.
+type CallTrace struct {
+	EntryPoint string   `json:"entryPoint" yaml:"entryPoint"` // User's function (e.g., "main.handleLogin")
+	Path       []string `json:"path" yaml:"path"`             // Call chain to crypto
+	TargetFunc string   `json:"targetFunc" yaml:"targetFunc"` // Crypto function called
+	TargetPkg  string   `json:"targetPkg" yaml:"targetPkg"`   // Package containing crypto
+}
+
 // CryptoUsage represents a single cryptographic algorithm usage in a package.
 type CryptoUsage struct {
-	Algorithm   string      `json:"algorithm" yaml:"algorithm"`
-	Type        string      `json:"type" yaml:"type"` // encryption, signature, hash, key-exchange
-	QuantumRisk QuantumRisk `json:"quantumRisk" yaml:"quantumRisk"`
-	Severity    Severity    `json:"severity" yaml:"severity"`
-	Location    Location    `json:"location" yaml:"location"`
-	CallPath    []string    `json:"callPath,omitempty" yaml:"callPath,omitempty"` // trace from public API to crypto
-	InExported  bool        `json:"inExported,omitempty" yaml:"inExported,omitempty"` // whether in exported/public function
-	Function    string      `json:"function,omitempty" yaml:"function,omitempty"` // containing function name
-	Remediation string      `json:"remediation,omitempty" yaml:"remediation,omitempty"` // migration guidance
-	Confidence  Confidence  `json:"confidence,omitempty" yaml:"confidence,omitempty"` // verified, high, medium, low
+	Algorithm    string       `json:"algorithm" yaml:"algorithm"`
+	Type         string       `json:"type" yaml:"type"` // encryption, signature, hash, key-exchange
+	QuantumRisk  QuantumRisk  `json:"quantumRisk" yaml:"quantumRisk"`
+	Severity     Severity     `json:"severity" yaml:"severity"`
+	Location     Location     `json:"location" yaml:"location"`
+	CallPath     []string     `json:"callPath,omitempty" yaml:"callPath,omitempty"` // trace from public API to crypto
+	InExported   bool         `json:"inExported,omitempty" yaml:"inExported,omitempty"` // whether in exported/public function
+	Function     string       `json:"function,omitempty" yaml:"function,omitempty"` // containing function name
+	Remediation  string       `json:"remediation,omitempty" yaml:"remediation,omitempty"` // migration guidance
+	Confidence   Confidence   `json:"confidence,omitempty" yaml:"confidence,omitempty"` // verified, high, medium, low
+	Reachability Reachability `json:"reachability,omitempty" yaml:"reachability,omitempty"` // CONFIRMED, REACHABLE, AVAILABLE
+	Traces       []CallTrace  `json:"traces,omitempty" yaml:"traces,omitempty"` // paths from user code to this crypto
 }
 
 // AnalysisMetadata contains information about how the analysis was performed.
@@ -132,6 +156,7 @@ type ScanResult struct {
 	ScanDate     time.Time          `json:"scanDate" yaml:"scanDate"`
 	Dependencies []DependencyResult `json:"dependencies" yaml:"dependencies"`
 	Summary      ScanSummary        `json:"summary" yaml:"summary"`
+	Hints        []string           `json:"hints,omitempty" yaml:"hints,omitempty"`
 }
 
 // ScanSummary provides aggregate statistics for a scan.
@@ -142,6 +167,11 @@ type ScanSummary struct {
 	QuantumVulnerable    int `json:"quantumVulnerable" yaml:"quantumVulnerable"`
 	QuantumPartial       int `json:"quantumPartial" yaml:"quantumPartial"`
 	NotInDatabase        int `json:"notInDatabase" yaml:"notInDatabase"`
+	// Reachability stats (only populated when reachability analysis is enabled)
+	ReachabilityAnalyzed bool `json:"reachabilityAnalyzed,omitempty" yaml:"reachabilityAnalyzed,omitempty"`
+	ConfirmedCrypto      int  `json:"confirmedCrypto,omitempty" yaml:"confirmedCrypto,omitempty"`   // Direct calls from user code
+	ReachableCrypto      int  `json:"reachableCrypto,omitempty" yaml:"reachableCrypto,omitempty"`   // In call graph
+	AvailableCrypto      int  `json:"availableCrypto,omitempty" yaml:"availableCrypto,omitempty"`   // In deps but not called
 }
 
 // HighestRisk returns the highest quantum risk from a list of crypto usages.

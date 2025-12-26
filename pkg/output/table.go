@@ -43,8 +43,13 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 		return nil
 	}
 
-	// Table header
-	fmt.Fprintf(w, "%-45s %-20s %-12s\n", "DEPENDENCY", "CRYPTO", "RISK")
+	// Table header - add REACH column if reachability was analyzed
+	hasReachability := result.Summary.ReachabilityAnalyzed
+	if hasReachability {
+		fmt.Fprintf(w, "%-40s %-18s %-12s %-10s\n", "DEPENDENCY", "CRYPTO", "RISK", "REACH")
+	} else {
+		fmt.Fprintf(w, "%-45s %-20s %-12s\n", "DEPENDENCY", "CRYPTO", "RISK")
+	}
 	fmt.Fprintln(w, strings.Repeat("─", 80))
 
 	// Collect remediation for later display
@@ -104,18 +109,38 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 		// Format risk with color indicator
 		riskStr := formatRisk(highestRisk)
 
-		fmt.Fprintf(w, "%-45s %-20s %-12s\n", depName, algStr, riskStr)
+		// Format reachability if available
+		if hasReachability {
+			reachStr := formatReachability(dep.Analysis.Crypto)
+			fmt.Fprintf(w, "%-40s %-18s %-12s %-10s\n", depName, algStr, riskStr, reachStr)
+		} else {
+			fmt.Fprintf(w, "%-45s %-20s %-12s\n", depName, algStr, riskStr)
+		}
 	}
 
 	fmt.Fprintln(w, strings.Repeat("─", 80))
 
 	// Summary
-	fmt.Fprintf(w, "SUMMARY: %d deps | %d use crypto | %d vulnerable | %d partial\n\n",
-		result.Summary.TotalDependencies,
-		result.Summary.WithCrypto,
-		result.Summary.QuantumVulnerable,
-		result.Summary.QuantumPartial,
-	)
+	if hasReachability {
+		fmt.Fprintf(w, "SUMMARY: %d deps | %d use crypto | %d vulnerable | %d partial\n",
+			result.Summary.TotalDependencies,
+			result.Summary.WithCrypto,
+			result.Summary.QuantumVulnerable,
+			result.Summary.QuantumPartial,
+		)
+		fmt.Fprintf(w, "REACHABILITY: %d confirmed | %d reachable | %d available-only\n\n",
+			result.Summary.ConfirmedCrypto,
+			result.Summary.ReachableCrypto,
+			result.Summary.AvailableCrypto,
+		)
+	} else {
+		fmt.Fprintf(w, "SUMMARY: %d deps | %d use crypto | %d vulnerable | %d partial\n\n",
+			result.Summary.TotalDependencies,
+			result.Summary.WithCrypto,
+			result.Summary.QuantumVulnerable,
+			result.Summary.QuantumPartial,
+		)
+	}
 
 	// Display remediation guidance
 	if f.Options.ShowRemediation && len(remediations) > 0 {
@@ -191,4 +216,34 @@ func formatRisk(risk types.QuantumRisk) string {
 	default:
 		return "UNKNOWN"
 	}
+}
+
+// formatReachability returns the highest reachability level from crypto usages.
+func formatReachability(usages []types.CryptoUsage) string {
+	hasConfirmed := false
+	hasReachable := false
+	hasAvailable := false
+
+	for _, u := range usages {
+		switch u.Reachability {
+		case types.ReachabilityConfirmed:
+			hasConfirmed = true
+		case types.ReachabilityReachable:
+			hasReachable = true
+		case types.ReachabilityAvailable:
+			hasAvailable = true
+		}
+	}
+
+	// Return highest priority reachability
+	if hasConfirmed {
+		return "CONFIRMED"
+	}
+	if hasReachable {
+		return "REACHABLE"
+	}
+	if hasAvailable {
+		return "AVAILABLE"
+	}
+	return "UNKNOWN"
 }

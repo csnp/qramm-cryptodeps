@@ -33,15 +33,16 @@ var (
 
 // CLI flags
 var (
-	formatFlag     string
-	offlineFlag    bool
-	deepFlag       bool
-	riskFilter     string
-	minSeverity    string
-	updateURL      string
-	verboseFlag    bool
-	failOn         string // CI/CD: fail on vulnerable, partial, or any
-	exitCode       int    // Tracks exit code for CI/CD
+	formatFlag       string
+	offlineFlag      bool
+	deepFlag         bool
+	reachabilityFlag bool
+	riskFilter       string
+	minSeverity      string
+	updateURL        string
+	verboseFlag      bool
+	failOn           string // CI/CD: fail on vulnerable, partial, or any
+	exitCode         int    // Tracks exit code for CI/CD
 )
 
 func main() {
@@ -135,6 +136,7 @@ func init() {
 	analyzeCmd.Flags().StringVarP(&formatFlag, "format", "f", "table", "Output format (table, json, cbom, sarif, markdown)")
 	analyzeCmd.Flags().BoolVar(&offlineFlag, "offline", false, "Only use local database, no downloads")
 	analyzeCmd.Flags().BoolVar(&deepFlag, "deep", false, "Force on-demand analysis for unknown packages")
+	analyzeCmd.Flags().BoolVar(&reachabilityFlag, "reachability", false, "Analyze call graph to find actually-used crypto (Go only)")
 	analyzeCmd.Flags().StringVar(&riskFilter, "risk", "", "Filter by risk level (vulnerable, partial, all)")
 	analyzeCmd.Flags().StringVar(&minSeverity, "min-severity", "", "Minimum severity to report")
 	analyzeCmd.Flags().StringVar(&failOn, "fail-on", "vulnerable", "Exit non-zero when risk found (vulnerable, partial, any, none)")
@@ -186,10 +188,11 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 
 	// Create analyzer
 	a := analyzer.New(db, analyzer.Options{
-		Offline:     offlineFlag,
-		Deep:        deepFlag,
-		RiskFilter:  riskFilter,
-		MinSeverity: minSeverity,
+		Offline:      offlineFlag,
+		Deep:         deepFlag,
+		Reachability: reachabilityFlag,
+		RiskFilter:   riskFilter,
+		MinSeverity:  minSeverity,
 	})
 
 	// Run analysis
