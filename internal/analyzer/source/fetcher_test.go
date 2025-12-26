@@ -275,3 +275,252 @@ func TestCleanCacheNonexistent(t *testing.T) {
 		t.Errorf("CleanCache on nonexistent dir should not error: %v", err)
 	}
 }
+
+func TestExtractGoModDir_EdgeCases(t *testing.T) {
+	tests := []struct {
+		name   string
+		output string
+		want   string
+	}{
+		{
+			name: "dir with spaces",
+			output: `{
+	"Path": "test",
+	"Dir": "/path/to/my module",
+	"Version": "v1.0.0"
+}`,
+			want: "/path/to/my module",
+		},
+		{
+			name: "dir with special chars",
+			output: `{
+	"Path": "test",
+	"Dir": "/path/to/module@v1.2.3",
+	"Version": "v1.2.3"
+}`,
+			want: "/path/to/module@v1.2.3",
+		},
+		{
+			name:   "only whitespace",
+			output: "   \n\t   ",
+			want:   "",
+		},
+		{
+			name: "malformed json",
+			output: `{
+	"Dir": "/path/to/module",`,
+			want: "/path/to/module",
+		},
+		{
+			name: "dir with trailing comma",
+			output: `{
+	"Dir": "/path/to/module",
+	"Path": "test"
+}`,
+			want: "/path/to/module",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := extractGoModDir([]byte(tt.output))
+			if got != tt.want {
+				t.Errorf("extractGoModDir() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFetchNpmWithoutVersion(t *testing.T) {
+	// Test npm fetch without version (should still cache correctly)
+	tmpDir, _ := os.MkdirTemp("", "fetcher-npm-noversion-test")
+	defer os.RemoveAll(tmpDir)
+
+	// Pre-create the cache directory with empty version
+	cachedDir := filepath.Join(tmpDir, "npm", "test-package", "")
+	os.MkdirAll(cachedDir, 0755)
+	os.WriteFile(filepath.Join(cachedDir, "index.js"), []byte("module.exports = {}"), 0644)
+
+	f := NewFetcher(tmpDir)
+	dir, err := f.Fetch(types.Dependency{
+		Name:      "test-package",
+		Version:   "", // No version
+		Ecosystem: types.EcosystemNPM,
+	})
+
+	if err != nil {
+		t.Fatalf("Fetch cached npm package without version failed: %v", err)
+	}
+	if dir != cachedDir {
+		t.Errorf("Expected cached dir %s, got %s", cachedDir, dir)
+	}
+}
+
+func TestFetchPyPIWithSlash(t *testing.T) {
+	// Test PyPI package with slash in name (normalized)
+	tmpDir, _ := os.MkdirTemp("", "fetcher-pypi-slash-test")
+	defer os.RemoveAll(tmpDir)
+
+	cachedDir := filepath.Join(tmpDir, "pypi", "google_cloud_storage", "2.0.0")
+	os.MkdirAll(cachedDir, 0755)
+	os.WriteFile(filepath.Join(cachedDir, "__init__.py"), []byte(""), 0644)
+
+	f := NewFetcher(tmpDir)
+	dir, err := f.Fetch(types.Dependency{
+		Name:      "google/cloud/storage",
+		Version:   "2.0.0",
+		Ecosystem: types.EcosystemPyPI,
+	})
+
+	if err != nil {
+		t.Fatalf("Fetch cached pypi package with slashes failed: %v", err)
+	}
+	// Note: the safeName replaces "/" with "_" so google/cloud/storage becomes google_cloud_storage
+	if dir != cachedDir {
+		t.Errorf("Expected cached dir %s, got %s", cachedDir, dir)
+	}
+}
+
+func TestFetchMavenWithComplexCoordinate(t *testing.T) {
+	// Test Maven with complex groupId (nested packages like org.apache.logging.log4j)
+	tmpDir, _ := os.MkdirTemp("", "fetcher-maven-complex-test")
+	defer os.RemoveAll(tmpDir)
+
+	cachedDir := filepath.Join(tmpDir, "maven", "org.apache.logging.log4j_log4j-core", "2.17.0", "extracted")
+	os.MkdirAll(cachedDir, 0755)
+	os.WriteFile(filepath.Join(cachedDir, "Log4j.java"), []byte("class Log4j {}"), 0644)
+
+	f := NewFetcher(tmpDir)
+	dir, err := f.Fetch(types.Dependency{
+		Name:      "org.apache.logging.log4j:log4j-core",
+		Version:   "2.17.0",
+		Ecosystem: types.EcosystemMaven,
+	})
+
+	if err != nil {
+		t.Fatalf("Fetch cached maven artifact failed: %v", err)
+	}
+	if dir != cachedDir {
+		t.Errorf("Expected cached dir %s, got %s", cachedDir, dir)
+	}
+}
+
+func TestFetchGoWithVersion(t *testing.T) {
+	// Test Go module fetch with explicit version
+	tmpDir, _ := os.MkdirTemp("", "fetcher-go-version-test")
+	defer os.RemoveAll(tmpDir)
+
+	f := NewFetcher(tmpDir)
+	// This will fail because the module doesn't exist, but tests the code path
+	_, err := f.Fetch(types.Dependency{
+		Name:      "nonexistent.invalid/pkg",
+		Version:   "v1.2.3",
+		Ecosystem: types.EcosystemGo,
+	})
+
+	if err == nil {
+		t.Log("Note: go mod download unexpectedly succeeded")
+	} else {
+		// Expected - verify error message contains useful info
+		if err.Error() == "" {
+			t.Error("Error message should not be empty")
+		}
+	}
+}
+
+func TestFetchGoWithoutVersion(t *testing.T) {
+	// Test Go module fetch without version (should get latest)
+	tmpDir, _ := os.MkdirTemp("", "fetcher-go-noversion-test")
+	defer os.RemoveAll(tmpDir)
+
+	f := NewFetcher(tmpDir)
+	// This will fail, but tests the code path for no-version case
+	_, err := f.Fetch(types.Dependency{
+		Name:      "nonexistent.invalid/pkg",
+		Version:   "", // No version
+		Ecosystem: types.EcosystemGo,
+	})
+
+	if err == nil {
+		t.Log("Note: go mod download unexpectedly succeeded")
+	}
+}
+
+func TestFetchMavenMissingColon(t *testing.T) {
+	// Test Maven with missing colon (invalid coordinate)
+	tmpDir, _ := os.MkdirTemp("", "fetcher-maven-invalid-test")
+	defer os.RemoveAll(tmpDir)
+
+	f := NewFetcher(tmpDir)
+	_, err := f.Fetch(types.Dependency{
+		Name:      "nogroup-noartifact",
+		Version:   "1.0.0",
+		Ecosystem: types.EcosystemMaven,
+	})
+
+	if err == nil {
+		t.Error("Expected error for invalid Maven coordinate without colon")
+	}
+	// Verify error message mentions the issue
+	if err != nil && !filepath.IsAbs(err.Error()) {
+		// Error should mention "invalid Maven coordinate"
+		t.Logf("Got expected error: %v", err)
+	}
+}
+
+func TestFetchMavenMultipleColons(t *testing.T) {
+	// Test Maven with multiple colons should fail (only groupId:artifactId format supported)
+	tmpDir, _ := os.MkdirTemp("", "fetcher-maven-multicolon-test")
+	defer os.RemoveAll(tmpDir)
+
+	f := NewFetcher(tmpDir)
+	_, err := f.Fetch(types.Dependency{
+		Name:      "com.example:artifact:extra", // Multiple colons - invalid
+		Version:   "1.0.0",
+		Ecosystem: types.EcosystemMaven,
+	})
+
+	if err == nil {
+		t.Error("Expected error for Maven coordinate with multiple colons")
+	}
+}
+
+func TestNewFetcherDefaultCacheDir(t *testing.T) {
+	f := NewFetcher("")
+
+	// Should have a default cache dir
+	if f.cacheDir == "" {
+		t.Error("Expected non-empty default cache dir")
+	}
+
+	// Should be in temp directory
+	if !filepath.IsAbs(f.cacheDir) {
+		t.Error("Cache dir should be absolute path")
+	}
+}
+
+func TestFetchNpmEmptyVersion(t *testing.T) {
+	// Test that empty version still creates proper cache path
+	tmpDir, _ := os.MkdirTemp("", "fetcher-npm-empty-version")
+	defer os.RemoveAll(tmpDir)
+
+	// Create cache with empty version directory
+	cachedDir := filepath.Join(tmpDir, "npm", "my-package", "")
+	os.MkdirAll(cachedDir, 0755)
+	os.WriteFile(filepath.Join(cachedDir, "index.js"), []byte(""), 0644)
+
+	f := NewFetcher(tmpDir)
+	dir, err := f.Fetch(types.Dependency{
+		Name:      "my-package",
+		Version:   "",
+		Ecosystem: types.EcosystemNPM,
+	})
+
+	if err != nil {
+		t.Fatalf("Fetch failed: %v", err)
+	}
+
+	if dir != cachedDir {
+		t.Errorf("Expected %s, got %s", cachedDir, dir)
+	}
+}

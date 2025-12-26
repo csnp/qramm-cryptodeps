@@ -322,3 +322,293 @@ func writeFile(path, content string) error {
 func writeFileBytes(path string, content []byte) error {
 	return os.WriteFile(path, content, 0644)
 }
+
+// Tests for Analyze function using pre-cached packages (no network required)
+
+func TestAnalyze_GoWithCachedSource(t *testing.T) {
+	// Create temp dir structure simulating a cached Go module
+	tmpDir := t.TempDir()
+	cacheDir := tmpDir + "/cache"
+
+	// Create a mock "go module" directory with crypto code
+	goModDir := tmpDir + "/gomod/test-pkg"
+	os.MkdirAll(goModDir, 0755)
+
+	// Write a Go file with RSA crypto
+	goCode := `package testpkg
+
+import "crypto/rsa"
+
+func GenerateKey() (*rsa.PrivateKey, error) {
+	return rsa.GenerateKey(nil, 2048)
+}
+`
+	if err := writeFile(goModDir+"/main.go", goCode); err != nil {
+		t.Fatalf("Failed to write test Go file: %v", err)
+	}
+
+	// We can't easily mock go mod download, so test the internal methods directly
+	analyzer := NewAnalyzer(cacheDir)
+	usages, err := analyzer.analyzeGo(goModDir)
+	if err != nil {
+		t.Fatalf("analyzeGo failed: %v", err)
+	}
+
+	// Verify RSA was detected
+	foundRSA := false
+	for _, u := range usages {
+		if u.Algorithm == "RSA" || u.Algorithm == "rsa" {
+			foundRSA = true
+			break
+		}
+	}
+	if !foundRSA {
+		t.Error("Expected to find RSA usage in Go code")
+	}
+}
+
+func TestAnalyze_NPMWithCachedSource(t *testing.T) {
+	tmpDir := t.TempDir()
+	cacheDir := tmpDir + "/cache"
+
+	// Create a pre-cached npm package structure
+	npmPkgDir := cacheDir + "/npm/test-crypto-pkg/1.0.0"
+	os.MkdirAll(npmPkgDir, 0755)
+
+	// Write a JavaScript file with crypto
+	jsCode := `const crypto = require('crypto');
+
+function encrypt(data, key) {
+    const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+    return cipher.update(data, 'utf8', 'hex');
+}
+
+module.exports = { encrypt };
+`
+	if err := writeFile(npmPkgDir+"/index.js", jsCode); err != nil {
+		t.Fatalf("Failed to write test JS file: %v", err)
+	}
+
+	analyzer := NewAnalyzer(cacheDir)
+
+	// This will use the cached directory
+	result, err := analyzer.Analyze(types.Dependency{
+		Name:      "test-crypto-pkg",
+		Version:   "1.0.0",
+		Ecosystem: types.EcosystemNPM,
+	})
+
+	if err != nil {
+		t.Fatalf("Analyze failed: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("Expected non-nil result")
+	}
+
+	if result.Package != "test-crypto-pkg" {
+		t.Errorf("Expected package name 'test-crypto-pkg', got '%s'", result.Package)
+	}
+
+	if len(result.Crypto) == 0 {
+		t.Error("Expected to find crypto usages")
+	}
+}
+
+func TestAnalyze_PyPIWithCachedSource(t *testing.T) {
+	tmpDir := t.TempDir()
+	cacheDir := tmpDir + "/cache"
+
+	// Create a pre-cached PyPI package structure
+	pyPkgDir := cacheDir + "/pypi/test-crypto-lib/2.0.0"
+	os.MkdirAll(pyPkgDir, 0755)
+
+	// Write a Python file with crypto
+	pyCode := `from cryptography.hazmat.primitives.asymmetric import rsa
+
+def generate_key():
+    return rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048,
+    )
+`
+	if err := writeFile(pyPkgDir+"/crypto_utils.py", pyCode); err != nil {
+		t.Fatalf("Failed to write test Python file: %v", err)
+	}
+
+	analyzer := NewAnalyzer(cacheDir)
+
+	result, err := analyzer.Analyze(types.Dependency{
+		Name:      "test-crypto-lib",
+		Version:   "2.0.0",
+		Ecosystem: types.EcosystemPyPI,
+	})
+
+	if err != nil {
+		t.Fatalf("Analyze failed: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("Expected non-nil result")
+	}
+
+	if result.Ecosystem != types.EcosystemPyPI {
+		t.Errorf("Expected ecosystem 'pypi', got '%s'", result.Ecosystem)
+	}
+}
+
+func TestAnalyze_MavenWithCachedSource(t *testing.T) {
+	tmpDir := t.TempDir()
+	cacheDir := tmpDir + "/cache"
+
+	// Create a pre-cached Maven artifact structure
+	// Maven uses extracted subdirectory
+	mavenPkgDir := cacheDir + "/maven/com.example_crypto/1.0.0/extracted"
+	os.MkdirAll(mavenPkgDir, 0755)
+
+	// Write a Java file with crypto
+	javaCode := `package com.example.crypto;
+
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+
+public class CryptoUtils {
+    public static void generateRSAKey() throws NoSuchAlgorithmException {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+        kpg.initialize(2048);
+    }
+}
+`
+	if err := writeFile(mavenPkgDir+"/CryptoUtils.java", javaCode); err != nil {
+		t.Fatalf("Failed to write test Java file: %v", err)
+	}
+
+	analyzer := NewAnalyzer(cacheDir)
+
+	result, err := analyzer.Analyze(types.Dependency{
+		Name:      "com.example:crypto",
+		Version:   "1.0.0",
+		Ecosystem: types.EcosystemMaven,
+	})
+
+	if err != nil {
+		t.Fatalf("Analyze failed: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("Expected non-nil result")
+	}
+
+	if result.Version != "1.0.0" {
+		t.Errorf("Expected version '1.0.0', got '%s'", result.Version)
+	}
+}
+
+func TestAnalyze_UnsupportedEcosystem(t *testing.T) {
+	analyzer := NewAnalyzer(t.TempDir())
+
+	_, err := analyzer.Analyze(types.Dependency{
+		Name:      "some-package",
+		Version:   "1.0.0",
+		Ecosystem: types.Ecosystem("unsupported"),
+	})
+
+	if err == nil {
+		t.Error("Expected error for unsupported ecosystem")
+	}
+}
+
+func TestAnalyze_NoCryptoFound(t *testing.T) {
+	tmpDir := t.TempDir()
+	cacheDir := tmpDir + "/cache"
+
+	// Create a cached package with no crypto code
+	npmPkgDir := cacheDir + "/npm/no-crypto-pkg/1.0.0"
+	os.MkdirAll(npmPkgDir, 0755)
+
+	// Write a JavaScript file WITHOUT crypto
+	jsCode := `function add(a, b) {
+    return a + b;
+}
+
+module.exports = { add };
+`
+	if err := writeFile(npmPkgDir+"/index.js", jsCode); err != nil {
+		t.Fatalf("Failed to write test JS file: %v", err)
+	}
+
+	analyzer := NewAnalyzer(cacheDir)
+
+	result, err := analyzer.Analyze(types.Dependency{
+		Name:      "no-crypto-pkg",
+		Version:   "1.0.0",
+		Ecosystem: types.EcosystemNPM,
+	})
+
+	if err != nil {
+		t.Fatalf("Analyze failed: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("Expected non-nil result even with no crypto")
+	}
+
+	// Result should have empty crypto slice
+	if len(result.Crypto) != 0 {
+		t.Errorf("Expected 0 crypto usages, got %d", len(result.Crypto))
+	}
+}
+
+func TestAnalyze_MultipleCryptoAlgorithms(t *testing.T) {
+	tmpDir := t.TempDir()
+	cacheDir := tmpDir + "/cache"
+
+	// Create a cached package with multiple crypto algorithms
+	npmPkgDir := cacheDir + "/npm/multi-crypto/1.0.0"
+	os.MkdirAll(npmPkgDir, 0755)
+
+	jsCode := `const crypto = require('crypto');
+
+function hashMD5(data) {
+    return crypto.createHash('md5').update(data).digest('hex');
+}
+
+function hashSHA256(data) {
+    return crypto.createHash('sha256').update(data).digest('hex');
+}
+
+function encryptAES(data, key, iv) {
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    return cipher.update(data, 'utf8', 'hex');
+}
+
+module.exports = { hashMD5, hashSHA256, encryptAES };
+`
+	if err := writeFile(npmPkgDir+"/crypto.js", jsCode); err != nil {
+		t.Fatalf("Failed to write test JS file: %v", err)
+	}
+
+	analyzer := NewAnalyzer(cacheDir)
+
+	result, err := analyzer.Analyze(types.Dependency{
+		Name:      "multi-crypto",
+		Version:   "1.0.0",
+		Ecosystem: types.EcosystemNPM,
+	})
+
+	if err != nil {
+		t.Fatalf("Analyze failed: %v", err)
+	}
+
+	// Should find multiple algorithms
+	if len(result.Crypto) < 2 {
+		t.Errorf("Expected at least 2 crypto usages, got %d", len(result.Crypto))
+	}
+
+	// Check that deduplication worked and algorithms are classified
+	for _, c := range result.Crypto {
+		if c.Algorithm == "" {
+			t.Error("Algorithm should not be empty after deduplication")
+		}
+	}
+}
