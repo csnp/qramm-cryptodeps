@@ -1,7 +1,7 @@
 # QRAMM CryptoDeps
 
 [![CI](https://github.com/csnp/qramm-cryptodeps/actions/workflows/ci.yml/badge.svg)](https://github.com/csnp/qramm-cryptodeps/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/csnp/qramm-cryptodeps)](https://goreportcard.com/report/github.com/csnp/qramm-cryptodeps)
+[![Go Report Card](https://img.shields.io/badge/go%20report-A-brightgreen)](https://goreportcard.com/report/github.com/csnp/qramm-cryptodeps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ## Overview
