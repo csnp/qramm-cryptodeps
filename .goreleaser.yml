@@ -1,0 +1,184 @@
+# GoReleaser configuration for CryptoDeps
+# https://goreleaser.com
+
+version: 2
+
+project_name: cryptodeps
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: cryptodeps
+    main: ./cmd/cryptodeps
+    binary: cryptodeps
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    # ARM v7 for Raspberry Pi
+    goarm:
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+    flags:
+      - -trimpath
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+      - CHANGELOG.md*
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: 'New Features'
+      regexp: '^feat:'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^fix:'
+      order: 1
+    - title: 'Security'
+      regexp: '^security:'
+      order: 2
+    - title: 'Other'
+      order: 999
+
+# Homebrew tap
+brews:
+  - name: cryptodeps
+    repository:
+      owner: csnp
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/csnp/qramm-cryptodeps"
+    description: "Analyze dependencies for quantum-vulnerable cryptographic algorithms"
+    license: "Apache-2.0"
+    skip_upload: auto
+    test: |
+      system "#{bin}/cryptodeps", "version"
+    install: |
+      bin.install "cryptodeps"
+
+# Docker images
+dockers:
+  - image_templates:
+      - "ghcr.io/csnp/cryptodeps:{{ .Tag }}"
+      - "ghcr.io/csnp/cryptodeps:v{{ .Major }}"
+      - "ghcr.io/csnp/cryptodeps:v{{ .Major }}.{{ .Minor }}"
+      - "ghcr.io/csnp/cryptodeps:latest"
+    dockerfile: Dockerfile.goreleaser
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source=https://github.com/csnp/qramm-cryptodeps"
+      - "--platform=linux/amd64"
+    skip_push: auto
+
+# GitHub release
+release:
+  github:
+    owner: csnp
+    name: qramm-cryptodeps
+  draft: false
+  prerelease: auto
+  mode: replace
+  header: |
+    ## CryptoDeps {{ .Tag }}
+
+    Analyze your dependencies for quantum-vulnerable cryptographic algorithms.
+
+    ### Installation
+
+    **macOS (Homebrew):**
+    ```bash
+    brew install csnp/tap/cryptodeps
+    ```
+
+    **Linux/macOS (Binary):**
+    ```bash
+    curl -sSL https://github.com/csnp/qramm-cryptodeps/releases/download/{{ .Tag }}/cryptodeps_{{ .Version }}_$(uname -s)_$(uname -m).tar.gz | tar xz
+    sudo mv cryptodeps /usr/local/bin/
+    ```
+
+    **Go Install:**
+    ```bash
+    go install github.com/csnp/qramm-cryptodeps/cmd/cryptodeps@{{ .Tag }}
+    ```
+
+    **Docker:**
+    ```bash
+    docker run --rm -v $(pwd):/workspace ghcr.io/csnp/cryptodeps:{{ .Tag }} analyze /workspace
+    ```
+
+  footer: |
+    ---
+
+    **Full Changelog**: https://github.com/csnp/qramm-cryptodeps/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+    Part of the [QRAMM Toolkit](https://qramm.org) by [CSNP](https://csnp.org).
+
+  extra_files:
+    - glob: ./data/crypto-database.json
+
+# Sign releases
+signs:
+  - cmd: cosign
+    env:
+      - COSIGN_EXPERIMENTAL=1
+    certificate: '${artifact}.pem'
+    args:
+      - sign-blob
+      - '--output-certificate=${certificate}'
+      - '--output-signature=${signature}'
+      - '${artifact}'
+      - '--yes'
+    artifacts: checksum
+    output: true

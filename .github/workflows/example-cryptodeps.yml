@@ -1,0 +1,68 @@
+# Example: CryptoDeps Workflow for Your Project
+# Copy this file to your repository's .github/workflows/ directory
+#
+# This workflow:
+#   1. Runs on PRs and pushes to main
+#   2. Scans dependencies for quantum-vulnerable cryptography
+#   3. Fails the build if vulnerable crypto is found
+#   4. Uploads SARIF results to GitHub Security tab
+
+name: Crypto Security Scan
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  # Allow manual runs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write  # Required for SARIF upload
+
+jobs:
+  cryptodeps:
+    name: Quantum Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Option 1: Use the CryptoDeps action (recommended)
+      - name: Run CryptoDeps
+        uses: csnp/qramm-cryptodeps@v1
+        with:
+          path: '.'
+          fail-on: 'vulnerable'
+          format: 'table'
+          sarif-file: 'cryptodeps.sarif'
+
+      # Option 2: Direct installation (alternative)
+      # - name: Set up Go
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: '1.22'
+      #
+      # - name: Install and run CryptoDeps
+      #   run: |
+      #     go install github.com/csnp/qramm-cryptodeps/cmd/cryptodeps@latest
+      #     cryptodeps analyze . --format table --fail-on vulnerable
+
+  # Optional: Strict mode for release branches
+  cryptodeps-strict:
+    name: Strict Crypto Check (Release)
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/release'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Strict CryptoDeps Scan
+        uses: csnp/qramm-cryptodeps@v1
+        with:
+          path: '.'
+          fail-on: 'partial'  # Stricter: also fail on partial-risk
+          format: 'sarif'
+          sarif-file: 'cryptodeps-strict.sarif'

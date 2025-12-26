@@ -1,0 +1,79 @@
+name: Release Database
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'internal/database/database.go'
+      - 'pkg/crypto/quantum.go'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., db-v1.0.1)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Generate database
+        run: |
+          go run cmd/gendb/main.go 2>/dev/null > crypto-database.json
+          echo "Generated database:"
+          head -20 crypto-database.json
+
+      - name: Get database stats
+        id: stats
+        run: |
+          PACKAGES=$(jq '.packages | length' crypto-database.json)
+          VERSION=$(jq -r '.version' crypto-database.json)
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate version tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "tag=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=db-v${{ steps.stats.outputs.version }}-$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "Database ${{ steps.tag.outputs.tag }}"
+          body: |
+            ## CryptoDeps Database Update
+
+            **Packages:** ${{ steps.stats.outputs.packages }}
+            **Version:** ${{ steps.stats.outputs.version }}
+
+            ### Usage
+            ```bash
+            # Update your local database
+            cryptodeps db update
+
+            # Or download directly
+            curl -LO https://github.com/csnp/qramm-cryptodeps/releases/latest/download/crypto-database.json
+            ```
+
+            ### What's included
+            - Comprehensive crypto algorithm database
+            - Quantum risk classifications
+            - NIST PQC migration remediation guidance
+          files: crypto-database.json
+          draft: false
+          prerelease: false

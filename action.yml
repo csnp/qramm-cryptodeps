@@ -1,0 +1,121 @@
+# GitHub Action for CryptoDeps
+# Analyzes dependencies for quantum-vulnerable cryptographic algorithms
+#
+# Usage in your workflow:
+#   - uses: csnp/qramm-cryptodeps@v1
+#     with:
+#       path: '.'
+#       fail-on: 'vulnerable'
+#       format: 'sarif'
+
+name: 'CryptoDeps'
+description: 'Analyze dependencies for quantum-vulnerable cryptographic algorithms'
+author: 'CSNP (csnp.org)'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Path to analyze (directory or manifest file)'
+    required: false
+    default: '.'
+  fail-on:
+    description: 'Fail threshold: vulnerable, partial, any, none'
+    required: false
+    default: 'vulnerable'
+  format:
+    description: 'Output format: table, json, sarif, cbom, markdown'
+    required: false
+    default: 'table'
+  version:
+    description: 'CryptoDeps version to use (default: latest)'
+    required: false
+    default: 'latest'
+  sarif-file:
+    description: 'Path to write SARIF output (for GitHub Security tab)'
+    required: false
+    default: ''
+
+outputs:
+  vulnerable-count:
+    description: 'Number of quantum-vulnerable dependencies'
+    value: ${{ steps.analyze.outputs.vulnerable }}
+  partial-count:
+    description: 'Number of partial-risk dependencies'
+    value: ${{ steps.analyze.outputs.partial }}
+  total-crypto:
+    description: 'Total dependencies using cryptography'
+    value: ${{ steps.analyze.outputs.crypto }}
+  exit-code:
+    description: 'Exit code (0=clean, 1=vulnerable, 2=error, 3=partial)'
+    value: ${{ steps.analyze.outputs.exit_code }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22'
+        cache: false
+
+    - name: Install CryptoDeps
+      shell: bash
+      run: |
+        if [ "${{ inputs.version }}" = "latest" ]; then
+          go install github.com/csnp/qramm-cryptodeps/cmd/cryptodeps@latest
+        else
+          go install github.com/csnp/qramm-cryptodeps/cmd/cryptodeps@${{ inputs.version }}
+        fi
+
+    - name: Run CryptoDeps Analysis
+      id: analyze
+      shell: bash
+      run: |
+        set +e
+
+        # Run analysis
+        OUTPUT=$(cryptodeps analyze "${{ inputs.path }}" \
+          --format "${{ inputs.format }}" \
+          --fail-on "${{ inputs.fail-on }}" \
+          --offline 2>&1)
+        EXIT_CODE=$?
+
+        echo "$OUTPUT"
+
+        # Parse summary for outputs (extract from table or JSON)
+        if [ "${{ inputs.format }}" = "json" ]; then
+          VULNERABLE=$(echo "$OUTPUT" | jq -r '.summary.quantumVulnerable // 0')
+          PARTIAL=$(echo "$OUTPUT" | jq -r '.summary.quantumPartial // 0')
+          CRYPTO=$(echo "$OUTPUT" | jq -r '.summary.withCrypto // 0')
+        else
+          # Default counts if not parseable
+          VULNERABLE=0
+          PARTIAL=0
+          CRYPTO=0
+        fi
+
+        echo "vulnerable=$VULNERABLE" >> $GITHUB_OUTPUT
+        echo "partial=$PARTIAL" >> $GITHUB_OUTPUT
+        echo "crypto=$CRYPTO" >> $GITHUB_OUTPUT
+        echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+
+        exit $EXIT_CODE
+
+    - name: Generate SARIF Report
+      if: inputs.sarif-file != ''
+      shell: bash
+      run: |
+        cryptodeps analyze "${{ inputs.path }}" \
+          --format sarif \
+          --fail-on none \
+          --offline > "${{ inputs.sarif-file }}"
+
+    - name: Upload SARIF to GitHub Security
+      if: inputs.sarif-file != ''
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: cryptodeps
