@@ -1,0 +1,4408 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2025-12-26T09:00:25Z",
+  "packages": [
+    {
+      "package": "filippo.io/age",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "scrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 0,
+        "safe": 2,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/ProtonMail/go-crypto",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/cloudflare/cfssl",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "SHA-256",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-384/SHA-512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "SHA-384",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/cossacklabs/themis/gothemis",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/go-jose/go-jose/v3",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "A256GCM",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ECDH-ES",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/golang-jwt/jwt/v5",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199048-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS384/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS512",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS384/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES512",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HS384",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HS512",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 6,
+        "partial": 2,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/gtank/cryptopasta",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199052-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "bcrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/hashicorp/vault/api",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/miekg/pkcs11",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with AES-256"
+        },
+        {
+          "algorithm": "3DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/open-quantum-safe/liboqs-go",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "ML-KEM",
+          "type": "key-exchange",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ML-DSA",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "SLH-DSA",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "BIKE",
+          "type": "key-exchange",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "HQC",
+          "type": "key-exchange",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 0,
+        "safe": 5,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/pquerna/otp",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "HMAC-SHA1",
+          "type": "mac",
+          "quantumRisk": "PARTIAL",
+          "severity": "MEDIUM",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HMAC-SHA256 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HMAC-SHA256",
+          "type": "mac",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HMAC-SHA512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HMAC-SHA512",
+          "type": "mac",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 2,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/secure-io/sio-go",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "github.com/tjfoc/gmsm",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "SM2",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "SM2 is ECDSA-based - migrate to ML-DSA (FIPS 204)"
+        },
+        {
+          "algorithm": "SM3",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-3 for post-quantum security"
+        },
+        {
+          "algorithm": "SM4",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "128-bit key - consider 256-bit alternatives for post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 2,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "golang.org/x/crypto",
+      "version": "",
+      "ecosystem": "go",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199048-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": "1.0.0"
+      },
+      "crypto": [
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "bcrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 0,
+        "safe": 3,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "com.amazonaws:aws-encryption-sdk-java",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "RSA-OAEP",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "com.auth0:java-jwt",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS384/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS512",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS384/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HS512",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 5,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "com.google.crypto.tink:tink",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "com.nimbusds:nimbus-jose-jwt",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS384/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS512",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "PS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "EdDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HS512",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "A256GCM",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 6,
+        "partial": 1,
+        "safe": 2,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "commons-codec:commons-codec",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "MD5",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        },
+        {
+          "algorithm": "SHA-1",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        },
+        {
+          "algorithm": "SHA-256",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-384/SHA-512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "SHA-384",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "SHA-512",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 2,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "io.jsonwebtoken:jjwt-api",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS384/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "RS512",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS384/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HS512",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 5,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "io.netty:netty-handler",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "io.vertx:vertx-auth-jwt",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199056-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HS512",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "net.i2p.crypto:eddsa",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 0,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "org.apache.shiro:shiro-crypto-core",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199056-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "Blowfish",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        },
+        {
+          "algorithm": "SHA-256",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-384/SHA-512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "SHA-512",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 2,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "org.bitbucket.b_c:jose4j",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "PS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "A256GCM",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ECDH-ES",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "org.bouncycastle:bcprov-jdk18on",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ML-KEM",
+          "type": "key-exchange",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ML-DSA",
+          "type": "signature",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 1,
+        "safe": 3,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "org.conscrypt:conscrypt-openjdk-uber",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "org.jasypt:jasypt",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with AES-256"
+        },
+        {
+          "algorithm": "3DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        },
+        {
+          "algorithm": "PBE",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "MEDIUM",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Ensure strong password and use modern KDF like Argon2"
+        },
+        {
+          "algorithm": "SHA-256",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-384/SHA-512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 3,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "org.springframework.security:spring-security-crypto",
+      "version": "",
+      "ecosystem": "maven",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "bcrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "scrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "PBKDF2",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider Argon2 for stronger security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 1,
+        "safe": 3,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "aes-js",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199052-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "argon2",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "bcrypt",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199048-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "bcrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "crypto-js",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with AES-256"
+        },
+        {
+          "algorithm": "3DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        },
+        {
+          "algorithm": "MD5",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        },
+        {
+          "algorithm": "SHA-1",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        },
+        {
+          "algorithm": "SHA-256",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-384/SHA-512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 2,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "elliptic",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199052-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "secp256k1",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 0,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "eth-crypto",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "secp256k1",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "AES-GCM",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256-GCM for post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "ethereumjs-wallet",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "secp256k1",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "scrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "PBKDF2",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider Argon2 for stronger security"
+        },
+        {
+          "algorithm": "AES-128-CTR",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "MEDIUM",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 2,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "express-jwt",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "jose",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "PS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "A256GCM",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ECDH-ES",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "jsonwebtoken",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199048-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "libsodium-wrappers",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199052-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "XSalsa20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "BLAKE2b",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 0,
+        "safe": 4,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "node-forge",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with AES-256"
+        },
+        {
+          "algorithm": "3DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        },
+        {
+          "algorithm": "MD5",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        },
+        {
+          "algorithm": "SHA-1",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        },
+        {
+          "algorithm": "SHA-256",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-384/SHA-512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 5,
+        "partial": 2,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "node-rsa",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199052-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 0,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "openpgp",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199052-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "passport-jwt",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "pbkdf2",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "PBKDF2",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider Argon2 for stronger security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "scrypt-js",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "scrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "sjcl",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199052-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "SHA-256",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider SHA-384/SHA-512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDH",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "PBKDF2",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider Argon2 for stronger security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 3,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "sodium-native",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "BLAKE2b",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 0,
+        "safe": 3,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "tweetnacl",
+      "version": "",
+      "ecosystem": "npm",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "XSalsa20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "M2Crypto",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "DSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with AES-256"
+        },
+        {
+          "algorithm": "Blowfish",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 5,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "PyJWT",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "argon2-cffi",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "asn1crypto",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "DSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 0,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "authlib",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "bcrypt",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "bcrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "cryptography",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199049-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "ecdsa",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "P-256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "P-384",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "P-521",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "secp256k1",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 5,
+        "partial": 0,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "ed25519",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 1,
+        "partial": 0,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "itsdangerous",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "HMAC-SHA1",
+          "type": "mac",
+          "quantumRisk": "PARTIAL",
+          "severity": "MEDIUM",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HMAC-SHA256 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HMAC-SHA256",
+          "type": "mac",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HMAC-SHA512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "HMAC-SHA512",
+          "type": "mac",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 2,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "jwcrypto",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "PS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "A256GCM",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "ECDH-ES",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "oscrypto",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199055-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "3DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "paramiko",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 3,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "passlib",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "bcrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "scrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "PBKDF2",
+          "type": "hash",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider Argon2 for stronger security"
+        },
+        {
+          "algorithm": "SHA-512",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 1,
+        "safe": 4,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "pgpy",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "pyOpenSSL",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199053-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with AES-256"
+        },
+        {
+          "algorithm": "3DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 4,
+        "partial": 1,
+        "safe": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "pycryptodome",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RSA",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "ECDSA",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "AES",
+          "type": "encryption",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use AES-256 for 128-bit post-quantum security"
+        },
+        {
+          "algorithm": "ChaCha20",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with AES-256"
+        },
+        {
+          "algorithm": "3DES",
+          "type": "encryption",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace with AES-256"
+        },
+        {
+          "algorithm": "MD5",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        },
+        {
+          "algorithm": "SHA-1",
+          "type": "hash",
+          "quantumRisk": "VULNERABLE",
+          "severity": "CRITICAL",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Replace immediately with SHA-256 or SHA-3"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 6,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "pynacl",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.19905-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "X25519",
+          "type": "key-exchange",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange"
+        },
+        {
+          "algorithm": "Ed25519",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures"
+        },
+        {
+          "algorithm": "XSalsa20-Poly1305",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "BLAKE2b",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        },
+        {
+          "algorithm": "Argon2",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 0,
+        "safe": 3,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "python-jose",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199051-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "RS256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "ES256",
+          "type": "signature",
+          "quantumRisk": "VULNERABLE",
+          "severity": "HIGH",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Use HS256/HS512 for symmetric signing, or wait for PQ-JWT standards"
+        },
+        {
+          "algorithm": "HS256",
+          "type": "signature",
+          "quantumRisk": "PARTIAL",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "Consider HS512 for stronger post-quantum security"
+        },
+        {
+          "algorithm": "A256GCM",
+          "type": "encryption",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 2,
+        "partial": 1,
+        "safe": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "package": "scrypt",
+      "version": "",
+      "ecosystem": "pypi",
+      "analysis": {
+        "date": "2025-12-26T02:00:25.199054-07:00",
+        "method": "embedded",
+        "tool": "cryptodeps",
+        "toolVersion": ""
+      },
+      "crypto": [
+        {
+          "algorithm": "scrypt",
+          "type": "hash",
+          "quantumRisk": "SAFE",
+          "severity": "INFO",
+          "location": {
+            "file": "",
+            "line": 0
+          },
+          "remediation": "No action needed - quantum safe"
+        }
+      ],
+      "quantumSummary": {
+        "vulnerable": 0,
+        "partial": 0,
+        "safe": 1,
+        "unknown": 0
+      }
+    }
+  ]
+}
