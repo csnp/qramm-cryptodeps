@@ -5,7 +5,6 @@ package registry
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/csnp/qramm-cryptodeps/internal/database"
@@ -71,7 +70,6 @@ func (m *Merger) Merge(ctx context.Context) (*MergeResult, error) {
 	}
 
 	// Fetch from registries
-	fmt.Println("Fetching packages from registries...")
 	registryPackages, errors := m.fetcher.FetchAll(ctx)
 	result.Errors = errors
 
