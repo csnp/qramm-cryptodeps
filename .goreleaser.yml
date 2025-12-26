@@ -8,7 +8,6 @@ project_name: cryptodeps
 before:
   hooks:
     - go mod tidy
-    - go generate ./...
 
 builds:
   - id: cryptodeps
