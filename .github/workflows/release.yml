@@ -45,11 +45,6 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3
 
-      - name: Generate crypto database
-        run: |
-          go run cmd/gendb/main.go 2>/dev/null > data/crypto-database.json
-          echo "Generated database with $(jq '.packages | length' data/crypto-database.json) packages"
-
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
