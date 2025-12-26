@@ -30,3 +30,18 @@ func (f *JSONFormatter) Format(result *types.ScanResult, w io.Writer) error {
 	}
 	return encoder.Encode(result)
 }
+
+// FormatMulti writes multi-project scan results as JSON.
+func (f *JSONFormatter) FormatMulti(result *types.MultiProjectResult, w io.Writer) error {
+	if result == nil {
+		return errors.New("result cannot be nil")
+	}
+	if w == nil {
+		return errors.New("writer cannot be nil")
+	}
+	encoder := json.NewEncoder(w)
+	if f.Indent {
+		encoder.SetIndent("", "  ")
+	}
+	return encoder.Encode(result)
+}

@@ -37,6 +37,7 @@ var (
 	offlineFlag      bool
 	deepFlag         bool
 	reachabilityFlag bool
+	noWorkspacesFlag bool
 	riskFilter       string
 	minSeverity      string
 	updateURL        string
@@ -137,6 +138,7 @@ func init() {
 	analyzeCmd.Flags().BoolVar(&offlineFlag, "offline", false, "Only use local database, no downloads")
 	analyzeCmd.Flags().BoolVar(&deepFlag, "deep", false, "Force on-demand analysis for unknown packages")
 	analyzeCmd.Flags().BoolVar(&reachabilityFlag, "reachability", true, "Analyze call graph to find actually-used crypto (Go only, use --reachability=false to disable)")
+	analyzeCmd.Flags().BoolVar(&noWorkspacesFlag, "no-workspaces", false, "Disable workspace/monorepo discovery (scan single manifest only)")
 	analyzeCmd.Flags().StringVar(&riskFilter, "risk", "", "Filter by risk level (vulnerable, partial, all)")
 	analyzeCmd.Flags().StringVar(&minSeverity, "min-severity", "", "Minimum severity to report")
 	analyzeCmd.Flags().StringVar(&failOn, "fail-on", "vulnerable", "Exit non-zero when risk found (vulnerable, partial, any, none)")
@@ -195,24 +197,39 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 		MinSeverity:  minSeverity,
 	})
 
-	// Run analysis
-	result, err := a.Analyze(path)
-	if err != nil {
-		return fmt.Errorf("analysis failed: %w", err)
-	}
-
-	// Get formatter and output
+	// Get formatter
 	formatter, err := output.GetFormatter(format)
 	if err != nil {
 		return err
 	}
 
-	if err := formatter.Format(result, os.Stdout); err != nil {
-		return err
+	// Run analysis - use workspace discovery by default
+	if noWorkspacesFlag {
+		// Single manifest analysis (legacy behavior)
+		result, err := a.Analyze(path)
+		if err != nil {
+			return fmt.Errorf("analysis failed: %w", err)
+		}
+
+		if err := formatter.Format(result, os.Stdout); err != nil {
+			return err
+		}
+
+		exitCode = determineExitCode(result, failOn)
+	} else {
+		// Multi-project workspace discovery (default)
+		multiResult, err := a.AnalyzeAll(path)
+		if err != nil {
+			return fmt.Errorf("analysis failed: %w", err)
+		}
+
+		if err := formatter.FormatMulti(multiResult, os.Stdout); err != nil {
+			return err
+		}
+
+		exitCode = determineExitCodeMulti(multiResult, failOn)
 	}
 
-	// Set exit code based on findings and --fail-on flag
-	exitCode = determineExitCode(result, failOn)
 	return nil
 }
 
@@ -256,6 +273,45 @@ func determineExitCode(result *types.ScanResult, threshold string) int {
 	default:
 		// Fail only on vulnerable (default)
 		if result.Summary.QuantumVulnerable > 0 {
+			return ExitVulnerable
+		}
+		return ExitSuccess
+	}
+}
+
+// determineExitCodeMulti calculates exit code for multi-project results.
+func determineExitCodeMulti(result *types.MultiProjectResult, threshold string) int {
+	threshold = strings.ToLower(threshold)
+
+	switch threshold {
+	case "none":
+		return ExitSuccess
+
+	case "any":
+		if result.TotalSummary.WithCrypto > 0 {
+			if result.TotalSummary.QuantumVulnerable > 0 {
+				return ExitVulnerable
+			}
+			if result.TotalSummary.QuantumPartial > 0 {
+				return ExitPartial
+			}
+			return ExitPartial
+		}
+		return ExitSuccess
+
+	case "partial":
+		if result.TotalSummary.QuantumVulnerable > 0 {
+			return ExitVulnerable
+		}
+		if result.TotalSummary.QuantumPartial > 0 {
+			return ExitPartial
+		}
+		return ExitSuccess
+
+	case "vulnerable":
+		fallthrough
+	default:
+		if result.TotalSummary.QuantumVulnerable > 0 {
 			return ExitVulnerable
 		}
 		return ExitSuccess

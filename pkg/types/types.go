@@ -174,6 +174,41 @@ type ScanSummary struct {
 	AvailableCrypto      int  `json:"availableCrypto,omitempty" yaml:"availableCrypto,omitempty"`   // In deps but not called
 }
 
+// MultiProjectResult represents the result of scanning multiple projects/manifests.
+type MultiProjectResult struct {
+	RootPath     string        `json:"rootPath" yaml:"rootPath"`
+	ScanDate     time.Time     `json:"scanDate" yaml:"scanDate"`
+	Projects     []*ScanResult `json:"projects" yaml:"projects"`
+	TotalSummary ScanSummary   `json:"totalSummary" yaml:"totalSummary"`
+}
+
+// AggregateResults combines multiple scan results into a single multi-project result.
+func AggregateResults(rootPath string, results []*ScanResult) *MultiProjectResult {
+	multi := &MultiProjectResult{
+		RootPath: rootPath,
+		ScanDate: time.Now(),
+		Projects: results,
+	}
+
+	// Aggregate summaries
+	for _, r := range results {
+		multi.TotalSummary.TotalDependencies += r.Summary.TotalDependencies
+		multi.TotalSummary.DirectDependencies += r.Summary.DirectDependencies
+		multi.TotalSummary.WithCrypto += r.Summary.WithCrypto
+		multi.TotalSummary.QuantumVulnerable += r.Summary.QuantumVulnerable
+		multi.TotalSummary.QuantumPartial += r.Summary.QuantumPartial
+		multi.TotalSummary.NotInDatabase += r.Summary.NotInDatabase
+		multi.TotalSummary.ConfirmedCrypto += r.Summary.ConfirmedCrypto
+		multi.TotalSummary.ReachableCrypto += r.Summary.ReachableCrypto
+		multi.TotalSummary.AvailableCrypto += r.Summary.AvailableCrypto
+		if r.Summary.ReachabilityAnalyzed {
+			multi.TotalSummary.ReachabilityAnalyzed = true
+		}
+	}
+
+	return multi
+}
+
 // HighestRisk returns the highest quantum risk from a list of crypto usages.
 func HighestRisk(usages []CryptoUsage) QuantumRisk {
 	if len(usages) == 0 {

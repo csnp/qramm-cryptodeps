@@ -445,3 +445,77 @@ func shortenFuncName(fullName string) string {
 	}
 	return fullName
 }
+
+// FormatMulti writes multi-project scan results as a table.
+func (f *TableFormatter) FormatMulti(result *types.MultiProjectResult, w io.Writer) error {
+	if result == nil {
+		return errors.New("result cannot be nil")
+	}
+	if w == nil {
+		return errors.New("writer cannot be nil")
+	}
+
+	// If there's only one project, just format it normally
+	if len(result.Projects) == 1 {
+		return f.Format(result.Projects[0], w)
+	}
+
+	// Header showing discovered projects
+	fmt.Fprintf(w, "\nScanning %s...\n", result.RootPath)
+	fmt.Fprintf(w, "Found %d projects:\n", len(result.Projects))
+	for _, p := range result.Projects {
+		relPath := getRelativePath(result.RootPath, p.Manifest)
+		fmt.Fprintf(w, "  - %s (%s)\n", relPath, p.Ecosystem)
+	}
+	fmt.Fprintln(w)
+
+	// Format each project
+	for i, project := range result.Projects {
+		relPath := getRelativePath(result.RootPath, project.Manifest)
+		fmt.Fprintf(w, "=== %s (%s) ===\n", relPath, project.Ecosystem)
+
+		// Use the single-project formatter for each project
+		if err := f.Format(project, w); err != nil {
+			return err
+		}
+
+		// Add separator between projects (but not after the last one)
+		if i < len(result.Projects)-1 {
+			fmt.Fprintln(w)
+		}
+	}
+
+	// Total summary across all projects
+	fmt.Fprintln(w, strings.Repeat("═", 90))
+	fmt.Fprintf(w, "TOTAL: %d projects | %d deps | %d with crypto | %d vulnerable | %d partial\n",
+		len(result.Projects),
+		result.TotalSummary.TotalDependencies,
+		result.TotalSummary.WithCrypto,
+		result.TotalSummary.QuantumVulnerable,
+		result.TotalSummary.QuantumPartial,
+	)
+	if result.TotalSummary.ReachabilityAnalyzed {
+		fmt.Fprintf(w, "REACHABILITY: %d confirmed | %d reachable | %d available-only\n",
+			result.TotalSummary.ConfirmedCrypto,
+			result.TotalSummary.ReachableCrypto,
+			result.TotalSummary.AvailableCrypto,
+		)
+	}
+	fmt.Fprintln(w)
+
+	return nil
+}
+
+// getRelativePath returns a relative path from root to target.
+func getRelativePath(root, target string) string {
+	// Simple approach: remove root prefix if present
+	if strings.HasPrefix(target, root) {
+		rel := strings.TrimPrefix(target, root)
+		rel = strings.TrimPrefix(rel, "/")
+		if rel == "" {
+			return "."
+		}
+		return "./" + rel
+	}
+	return target
+}

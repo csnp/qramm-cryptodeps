@@ -158,3 +158,48 @@ func (f *MarkdownFormatter) Format(result *types.ScanResult, w io.Writer) error 
 
 	return nil
 }
+
+// FormatMulti writes multi-project scan results as Markdown.
+func (f *MarkdownFormatter) FormatMulti(result *types.MultiProjectResult, w io.Writer) error {
+	if result == nil {
+		return errors.New("result cannot be nil")
+	}
+	if w == nil {
+		return errors.New("writer cannot be nil")
+	}
+
+	// Title
+	fmt.Fprintf(w, "# CryptoDeps Multi-Project Scan Report\n\n")
+
+	// Overview
+	fmt.Fprintf(w, "## Overview\n\n")
+	fmt.Fprintf(w, "| Metric | Value |\n")
+	fmt.Fprintf(w, "|--------|-------|\n")
+	fmt.Fprintf(w, "| **Root Path** | `%s` |\n", result.RootPath)
+	fmt.Fprintf(w, "| **Projects Scanned** | %d |\n", len(result.Projects))
+	fmt.Fprintf(w, "| **Total Dependencies** | %d |\n", result.TotalSummary.TotalDependencies)
+	fmt.Fprintf(w, "| **Using Crypto** | %d |\n", result.TotalSummary.WithCrypto)
+	fmt.Fprintf(w, "| **Quantum Vulnerable** | %d |\n", result.TotalSummary.QuantumVulnerable)
+	fmt.Fprintf(w, "| **Quantum Partial** | %d |\n", result.TotalSummary.QuantumPartial)
+	fmt.Fprintf(w, "\n")
+
+	// Project list
+	fmt.Fprintf(w, "### Projects\n\n")
+	for _, project := range result.Projects {
+		fmt.Fprintf(w, "- `%s` (%s)\n", project.Manifest, project.Ecosystem)
+	}
+	fmt.Fprintf(w, "\n")
+
+	// Individual project reports
+	for _, project := range result.Projects {
+		fmt.Fprintf(w, "---\n\n")
+		fmt.Fprintf(w, "## %s\n\n", project.Manifest)
+
+		// Use the single-project formatter for detailed output
+		if err := f.Format(project, w); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

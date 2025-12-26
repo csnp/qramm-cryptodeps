@@ -173,3 +173,30 @@ func severityToSARIFLevel(severity types.Severity) string {
 		return "note"
 	}
 }
+
+// FormatMulti writes multi-project scan results as SARIF.
+// It merges all findings from all projects into a single SARIF log.
+func (f *SARIFFormatter) FormatMulti(result *types.MultiProjectResult, w io.Writer) error {
+	if result == nil {
+		return errors.New("result cannot be nil")
+	}
+	if w == nil {
+		return errors.New("writer cannot be nil")
+	}
+
+	// Create a merged scan result for SARIF output
+	merged := &types.ScanResult{
+		Project:   result.RootPath,
+		Manifest:  "multiple",
+		Ecosystem: types.EcosystemUnknown,
+		ScanDate:  result.ScanDate,
+		Summary:   result.TotalSummary,
+	}
+
+	// Collect all dependencies from all projects
+	for _, project := range result.Projects {
+		merged.Dependencies = append(merged.Dependencies, project.Dependencies...)
+	}
+
+	return f.Format(merged, w)
+}

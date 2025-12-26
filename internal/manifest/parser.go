@@ -119,3 +119,61 @@ func SupportedManifests() []string {
 		"pom.xml",
 	}
 }
+
+// DetectAndParseAll discovers all manifests in a directory (including workspaces)
+// and parses each one. Returns a slice of parsed manifests.
+func DetectAndParseAll(path string) ([]*Manifest, error) {
+	// Check if path is a directory
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, fmt.Errorf("cannot access path: %w", err)
+	}
+
+	// If it's a file, just parse that single file
+	if !info.IsDir() {
+		manifest, err := DetectAndParse(path)
+		if err != nil {
+			return nil, err
+		}
+		return []*Manifest{manifest}, nil
+	}
+
+	// Discover all manifests in the directory tree
+	manifestPaths, err := DiscoverManifests(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to discover manifests: %w", err)
+	}
+
+	if len(manifestPaths) == 0 {
+		return nil, fmt.Errorf("no supported manifest files found in %s", path)
+	}
+
+	var manifests []*Manifest
+	var parseErrors []string
+
+	for _, manifestPath := range manifestPaths {
+		parser, err := getParser(filepath.Base(manifestPath))
+		if err != nil {
+			// Skip unsupported files silently (they might have been picked up by glob)
+			continue
+		}
+
+		deps, err := parser.Parse(manifestPath)
+		if err != nil {
+			parseErrors = append(parseErrors, fmt.Sprintf("%s: %v", manifestPath, err))
+			continue
+		}
+
+		manifests = append(manifests, &Manifest{
+			Path:         manifestPath,
+			Ecosystem:    parser.Ecosystem(),
+			Dependencies: deps,
+		})
+	}
+
+	if len(manifests) == 0 && len(parseErrors) > 0 {
+		return nil, fmt.Errorf("failed to parse any manifests: %s", strings.Join(parseErrors, "; "))
+	}
+
+	return manifests, nil
+}

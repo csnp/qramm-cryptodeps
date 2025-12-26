@@ -56,8 +56,38 @@ func (a *Analyzer) Analyze(path string) (*types.ScanResult, error) {
 		return nil, err
 	}
 
+	return a.analyzeManifest(m, path)
+}
+
+// AnalyzeAll discovers and analyzes all manifests in a directory (including workspaces).
+func (a *Analyzer) AnalyzeAll(path string) (*types.MultiProjectResult, error) {
+	// Discover and parse all manifests
+	manifests, err := manifest.DetectAndParseAll(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []*types.ScanResult
+	for _, m := range manifests {
+		result, err := a.analyzeManifest(m, filepath.Dir(m.Path))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to analyze %s: %v\n", m.Path, err)
+			continue
+		}
+		results = append(results, result)
+	}
+
+	if len(results) == 0 {
+		return nil, fmt.Errorf("no manifests could be analyzed")
+	}
+
+	return types.AggregateResults(path, results), nil
+}
+
+// analyzeManifest analyzes a single parsed manifest.
+func (a *Analyzer) analyzeManifest(m *manifest.Manifest, projectPath string) (*types.ScanResult, error) {
 	result := &types.ScanResult{
-		Project:      path,
+		Project:      projectPath,
 		Manifest:     m.Path,
 		Ecosystem:    m.Ecosystem,
 		ScanDate:     time.Now(),
@@ -94,7 +124,7 @@ func (a *Analyzer) Analyze(path string) (*types.ScanResult, error) {
 
 	// Perform reachability analysis if enabled and ecosystem supports it
 	if a.options.Reachability && m.Ecosystem == types.EcosystemGo {
-		a.performReachabilityAnalysis(result, path)
+		a.performReachabilityAnalysis(result, projectPath)
 	}
 
 	// Generate hints based on results

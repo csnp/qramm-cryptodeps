@@ -41,6 +41,7 @@ func DefaultOptions() FormatterOptions {
 // Formatter formats scan results for output.
 type Formatter interface {
 	Format(result *types.ScanResult, w io.Writer) error
+	FormatMulti(result *types.MultiProjectResult, w io.Writer) error
 }
 
 // FormatterWithOptions extends Formatter with options support.
