@@ -1,0 +1,63 @@
+# GitLab CI/CD Template for CryptoDeps
+# Copy this to your .gitlab-ci.yml or include it as a template
+#
+# Usage:
+#   include:
+#     - remote: 'https://raw.githubusercontent.com/csnp/qramm-cryptodeps/main/examples/gitlab-ci.yml'
+#
+# Or copy the job directly into your .gitlab-ci.yml
+
+stages:
+  - security
+
+# Quantum vulnerability scan for dependencies
+cryptodeps:
+  stage: security
+  image: golang:1.22-alpine
+  variables:
+    # Fail threshold: vulnerable, partial, any, none
+    CRYPTODEPS_FAIL_ON: "vulnerable"
+    # Output format: table, json, sarif, cbom, markdown
+    CRYPTODEPS_FORMAT: "table"
+  before_script:
+    - go install github.com/csnp/qramm-cryptodeps/cmd/cryptodeps@latest
+  script:
+    - cryptodeps analyze . --format $CRYPTODEPS_FORMAT --fail-on $CRYPTODEPS_FAIL_ON
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  allow_failure: false
+  artifacts:
+    when: always
+    paths:
+      - cryptodeps-report.json
+    reports:
+      # GitLab doesn't natively support SARIF, but JSON can be parsed
+      codequality: cryptodeps-report.json
+
+# Optional: Generate SARIF report for external tools
+cryptodeps:sarif:
+  stage: security
+  image: golang:1.22-alpine
+  before_script:
+    - go install github.com/csnp/qramm-cryptodeps/cmd/cryptodeps@latest
+  script:
+    - cryptodeps analyze . --format sarif --fail-on none > cryptodeps.sarif
+  artifacts:
+    paths:
+      - cryptodeps.sarif
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Optional: Strict mode for production branches
+cryptodeps:strict:
+  stage: security
+  image: golang:1.22-alpine
+  before_script:
+    - go install github.com/csnp/qramm-cryptodeps/cmd/cryptodeps@latest
+  script:
+    - cryptodeps analyze . --format table --fail-on partial
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^release/
+    - if: $CI_COMMIT_TAG
+  allow_failure: false
