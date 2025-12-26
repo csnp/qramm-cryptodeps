@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 
 	"github.com/csnp/qramm-cryptodeps/pkg/types"
@@ -15,6 +16,14 @@ import (
 // TableFormatter formats scan results as a human-readable table.
 type TableFormatter struct {
 	Options FormatterOptions
+}
+
+// cryptoDetail holds info for detailed crypto breakdown.
+type cryptoDetail struct {
+	algorithm    string
+	risk         types.QuantumRisk
+	reachability types.Reachability
+	dependency   string
 }
 
 // Format writes the scan result as a table.
@@ -43,86 +52,46 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 		return nil
 	}
 
-	// Table header - add REACH column if reachability was analyzed
 	hasReachability := result.Summary.ReachabilityAnalyzed
-	if hasReachability {
-		fmt.Fprintf(w, "%-40s %-18s %-12s %-10s\n", "DEPENDENCY", "CRYPTO", "RISK", "REACH")
-	} else {
-		fmt.Fprintf(w, "%-45s %-20s %-12s\n", "DEPENDENCY", "CRYPTO", "RISK")
-	}
-	fmt.Fprintln(w, strings.Repeat("─", 80))
 
-	// Collect remediation for later display
-	type remediationItem struct {
-		algorithm   string
-		risk        types.QuantumRisk
-		remediation string
-	}
-	remediations := make([]remediationItem, 0)
+	// Collect all crypto details for breakdown
+	var allCrypto []cryptoDetail
+	remediations := make(map[string]string) // algorithm -> remediation
 
-	// Table rows
 	for _, dep := range result.Dependencies {
 		if dep.Analysis == nil || len(dep.Analysis.Crypto) == 0 {
 			continue
 		}
 
-		// Format dependency name with version
 		depName := dep.Dependency.Name
 		if dep.Dependency.Version != "" {
-			depName = fmt.Sprintf("%s %s", dep.Dependency.Name, dep.Dependency.Version)
-		}
-		// Add indicator for deep-analyzed packages
-		if dep.DeepAnalyzed {
-			depName = depName + " *"
+			depName = fmt.Sprintf("%s@%s", dep.Dependency.Name, dep.Dependency.Version)
 		}
 
-		// Truncate if too long
-		if len(depName) > 44 {
-			depName = depName[:41] + "..."
-		}
-
-		// Group crypto by algorithm
-		algorithms := make([]string, 0)
-		highestRisk := types.RiskUnknown
 		for _, crypto := range dep.Analysis.Crypto {
-			algorithms = append(algorithms, crypto.Algorithm)
-			if riskPriority(crypto.QuantumRisk) > riskPriority(highestRisk) {
-				highestRisk = crypto.QuantumRisk
+			allCrypto = append(allCrypto, cryptoDetail{
+				algorithm:    crypto.Algorithm,
+				risk:         crypto.QuantumRisk,
+				reachability: crypto.Reachability,
+				dependency:   depName,
+			})
+			if crypto.Remediation != "" {
+				remediations[crypto.Algorithm] = crypto.Remediation
 			}
-			// Collect remediation for vulnerable/partial algorithms
-			if f.Options.ShowRemediation && crypto.Remediation != "" &&
-				(crypto.QuantumRisk == types.RiskVulnerable || crypto.QuantumRisk == types.RiskPartial) {
-				remediations = append(remediations, remediationItem{
-					algorithm:   crypto.Algorithm,
-					risk:        crypto.QuantumRisk,
-					remediation: crypto.Remediation,
-				})
-			}
-		}
-
-		// Format algorithms (truncate if needed)
-		algStr := strings.Join(algorithms, ", ")
-		if len(algStr) > 19 {
-			algStr = algStr[:16] + "..."
-		}
-
-		// Format risk with color indicator
-		riskStr := formatRisk(highestRisk)
-
-		// Format reachability if available
-		if hasReachability {
-			reachStr := formatReachability(dep.Analysis.Crypto)
-			fmt.Fprintf(w, "%-40s %-18s %-12s %-10s\n", depName, algStr, riskStr, reachStr)
-		} else {
-			fmt.Fprintf(w, "%-45s %-20s %-12s\n", depName, algStr, riskStr)
 		}
 	}
 
-	fmt.Fprintln(w, strings.Repeat("─", 80))
+	// Print detailed crypto breakdown grouped by reachability
+	if hasReachability {
+		f.printReachabilityBreakdown(w, allCrypto)
+	} else {
+		f.printSimpleBreakdown(w, allCrypto)
+	}
 
 	// Summary
+	fmt.Fprintln(w, strings.Repeat("─", 90))
 	if hasReachability {
-		fmt.Fprintf(w, "SUMMARY: %d deps | %d use crypto | %d vulnerable | %d partial\n",
+		fmt.Fprintf(w, "SUMMARY: %d deps | %d with crypto | %d vulnerable | %d partial\n",
 			result.Summary.TotalDependencies,
 			result.Summary.WithCrypto,
 			result.Summary.QuantumVulnerable,
@@ -134,7 +103,7 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 			result.Summary.AvailableCrypto,
 		)
 	} else {
-		fmt.Fprintf(w, "SUMMARY: %d deps | %d use crypto | %d vulnerable | %d partial\n\n",
+		fmt.Fprintf(w, "SUMMARY: %d deps | %d with crypto | %d vulnerable | %d partial\n\n",
 			result.Summary.TotalDependencies,
 			result.Summary.WithCrypto,
 			result.Summary.QuantumVulnerable,
@@ -144,22 +113,7 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 
 	// Display remediation guidance
 	if f.Options.ShowRemediation && len(remediations) > 0 {
-		// Deduplicate by algorithm
-		seen := make(map[string]bool)
-		fmt.Fprintln(w, "REMEDIATION GUIDANCE:")
-		fmt.Fprintln(w, strings.Repeat("─", 80))
-		for _, r := range remediations {
-			if seen[r.algorithm] {
-				continue
-			}
-			seen[r.algorithm] = true
-			riskIcon := "!"
-			if r.risk == types.RiskVulnerable {
-				riskIcon = "!!"
-			}
-			fmt.Fprintf(w, "  [%s] %-12s → %s\n", riskIcon, r.algorithm, r.remediation)
-		}
-		fmt.Fprintln(w)
+		f.printRemediation(w, allCrypto, remediations)
 	}
 
 	// Count deep-analyzed packages
@@ -190,6 +144,152 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 	return nil
 }
 
+// printReachabilityBreakdown prints crypto grouped by reachability status.
+func (f *TableFormatter) printReachabilityBreakdown(w io.Writer, allCrypto []cryptoDetail) {
+	// Group by reachability
+	confirmed := filterByReachability(allCrypto, types.ReachabilityConfirmed)
+	reachable := filterByReachability(allCrypto, types.ReachabilityReachable)
+	available := filterByReachability(allCrypto, types.ReachabilityAvailable)
+
+	// Sort each group by risk (vulnerable first)
+	sortByRisk(confirmed)
+	sortByRisk(reachable)
+	sortByRisk(available)
+
+	// Print CONFIRMED section (most important)
+	if len(confirmed) > 0 {
+		fmt.Fprintln(w, "⚠ CONFIRMED - Actually used by your code:")
+		fmt.Fprintln(w, strings.Repeat("─", 90))
+		fmt.Fprintf(w, "  %-14s %-12s %s\n", "ALGORITHM", "RISK", "DEPENDENCY")
+		for _, c := range confirmed {
+			riskIcon := riskIcon(c.risk)
+			fmt.Fprintf(w, "  %s %-12s %-12s %s\n", riskIcon, c.algorithm, formatRisk(c.risk), c.dependency)
+		}
+		fmt.Fprintln(w)
+	}
+
+	// Print REACHABLE section
+	if len(reachable) > 0 {
+		fmt.Fprintln(w, "◐ REACHABLE - In call graph from your code:")
+		fmt.Fprintln(w, strings.Repeat("─", 90))
+		fmt.Fprintf(w, "  %-14s %-12s %s\n", "ALGORITHM", "RISK", "DEPENDENCY")
+		for _, c := range reachable {
+			riskIcon := riskIcon(c.risk)
+			fmt.Fprintf(w, "  %s %-12s %-12s %s\n", riskIcon, c.algorithm, formatRisk(c.risk), c.dependency)
+		}
+		fmt.Fprintln(w)
+	}
+
+	// Print AVAILABLE section (lower priority)
+	if len(available) > 0 {
+		fmt.Fprintln(w, "○ AVAILABLE - In dependencies but not called:")
+		fmt.Fprintln(w, strings.Repeat("─", 90))
+		fmt.Fprintf(w, "  %-14s %-12s %s\n", "ALGORITHM", "RISK", "DEPENDENCY")
+		for _, c := range available {
+			riskIcon := riskIcon(c.risk)
+			fmt.Fprintf(w, "  %s %-12s %-12s %s\n", riskIcon, c.algorithm, formatRisk(c.risk), c.dependency)
+		}
+		fmt.Fprintln(w)
+	}
+}
+
+// printSimpleBreakdown prints crypto without reachability grouping.
+func (f *TableFormatter) printSimpleBreakdown(w io.Writer, allCrypto []cryptoDetail) {
+	sortByRisk(allCrypto)
+
+	fmt.Fprintln(w, "CRYPTO ALGORITHMS FOUND:")
+	fmt.Fprintln(w, strings.Repeat("─", 90))
+	fmt.Fprintf(w, "  %-14s %-12s %s\n", "ALGORITHM", "RISK", "DEPENDENCY")
+	for _, c := range allCrypto {
+		riskIcon := riskIcon(c.risk)
+		fmt.Fprintf(w, "  %s %-12s %-12s %s\n", riskIcon, c.algorithm, formatRisk(c.risk), c.dependency)
+	}
+	fmt.Fprintln(w)
+}
+
+// printRemediation prints remediation guidance for vulnerable algorithms.
+func (f *TableFormatter) printRemediation(w io.Writer, allCrypto []cryptoDetail, remediations map[string]string) {
+	// Only show remediation for confirmed/reachable vulnerable algorithms
+	seen := make(map[string]bool)
+	var toShow []cryptoDetail
+
+	for _, c := range allCrypto {
+		if seen[c.algorithm] {
+			continue
+		}
+		if c.risk == types.RiskVulnerable || c.risk == types.RiskPartial {
+			if _, hasRemediation := remediations[c.algorithm]; hasRemediation {
+				toShow = append(toShow, c)
+				seen[c.algorithm] = true
+			}
+		}
+	}
+
+	if len(toShow) == 0 {
+		return
+	}
+
+	// Sort: confirmed first, then vulnerable before partial
+	sort.Slice(toShow, func(i, j int) bool {
+		// Confirmed first
+		if toShow[i].reachability == types.ReachabilityConfirmed && toShow[j].reachability != types.ReachabilityConfirmed {
+			return true
+		}
+		if toShow[i].reachability != types.ReachabilityConfirmed && toShow[j].reachability == types.ReachabilityConfirmed {
+			return false
+		}
+		// Then vulnerable before partial
+		return riskPriority(toShow[i].risk) > riskPriority(toShow[j].risk)
+	})
+
+	fmt.Fprintln(w, "REMEDIATION GUIDANCE:")
+	fmt.Fprintln(w, strings.Repeat("─", 90))
+	for _, c := range toShow {
+		icon := "!"
+		if c.risk == types.RiskVulnerable {
+			icon = "!!"
+		}
+		reachNote := ""
+		if c.reachability == types.ReachabilityConfirmed {
+			reachNote = " [PRIORITY]"
+		}
+		fmt.Fprintf(w, "  [%s] %-12s → %s%s\n", icon, c.algorithm, remediations[c.algorithm], reachNote)
+	}
+	fmt.Fprintln(w)
+}
+
+// filterByReachability returns crypto with the given reachability.
+func filterByReachability(crypto []cryptoDetail, reach types.Reachability) []cryptoDetail {
+	var result []cryptoDetail
+	for _, c := range crypto {
+		if c.reachability == reach {
+			result = append(result, c)
+		}
+	}
+	return result
+}
+
+// sortByRisk sorts crypto by risk level (vulnerable first).
+func sortByRisk(crypto []cryptoDetail) {
+	sort.Slice(crypto, func(i, j int) bool {
+		return riskPriority(crypto[i].risk) > riskPriority(crypto[j].risk)
+	})
+}
+
+// riskIcon returns an icon for the risk level.
+func riskIcon(risk types.QuantumRisk) string {
+	switch risk {
+	case types.RiskVulnerable:
+		return "🔴"
+	case types.RiskPartial:
+		return "🟡"
+	case types.RiskSafe:
+		return "🟢"
+	default:
+		return "⚪"
+	}
+}
+
 // riskPriority returns a numeric priority for sorting risks.
 func riskPriority(risk types.QuantumRisk) int {
 	switch risk {
@@ -216,34 +316,4 @@ func formatRisk(risk types.QuantumRisk) string {
 	default:
 		return "UNKNOWN"
 	}
-}
-
-// formatReachability returns the highest reachability level from crypto usages.
-func formatReachability(usages []types.CryptoUsage) string {
-	hasConfirmed := false
-	hasReachable := false
-	hasAvailable := false
-
-	for _, u := range usages {
-		switch u.Reachability {
-		case types.ReachabilityConfirmed:
-			hasConfirmed = true
-		case types.ReachabilityReachable:
-			hasReachable = true
-		case types.ReachabilityAvailable:
-			hasAvailable = true
-		}
-	}
-
-	// Return highest priority reachability
-	if hasConfirmed {
-		return "CONFIRMED"
-	}
-	if hasReachable {
-		return "REACHABLE"
-	}
-	if hasAvailable {
-		return "AVAILABLE"
-	}
-	return "UNKNOWN"
 }
