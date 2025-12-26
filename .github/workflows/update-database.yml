@@ -1,0 +1,137 @@
+# Automated database update workflow
+# - Runs weekly to ensure crypto database stays current
+# - Triggers on source database changes
+# - Can be manually triggered
+
+name: Update Database
+
+on:
+  schedule:
+    # Run every Monday at 9:00 UTC
+    - cron: '0 9 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - 'internal/database/**'
+      - 'pkg/crypto/quantum.go'
+      - 'pkg/crypto/algorithms.go'
+  workflow_dispatch:
+    inputs:
+      force_release:
+        description: 'Force release even if no changes'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Store current database hash
+        id: before
+        run: |
+          if [ -f data/crypto-database.json ]; then
+            echo "hash=$(sha256sum data/crypto-database.json | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+          else
+            echo "hash=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate updated database
+        run: |
+          go run cmd/gendb/main.go > data/crypto-database.json
+          echo "Generated database with $(jq '.packages | length' data/crypto-database.json) packages"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          NEW_HASH=$(sha256sum data/crypto-database.json | cut -d' ' -f1)
+          if [ "${{ steps.before.outputs.hash }}" != "$NEW_HASH" ] || [ "${{ inputs.force_release }}" == "true" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Database has changed or force release requested"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          fi
+
+      - name: Get database stats
+        if: steps.changes.outputs.changed == 'true'
+        id: stats
+        run: |
+          PACKAGES=$(jq '.packages | length' data/crypto-database.json)
+          VERSION=$(jq -r '.version' data/crypto-database.json)
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit updated database
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/crypto-database.json
+          git commit -m "chore(db): Update crypto database
+
+          - Packages: ${{ steps.stats.outputs.packages }}
+          - Version: ${{ steps.stats.outputs.version }}
+          - Updated: $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Generate release tag
+        if: steps.changes.outputs.changed == 'true'
+        id: tag
+        run: |
+          TAG="db-v${{ steps.stats.outputs.version }}-$(date +%Y%m%d)"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create database release
+        if: steps.changes.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "Database Update ${{ steps.tag.outputs.tag }}"
+          body: |
+            ## Automated Database Update
+
+            **Packages:** ${{ steps.stats.outputs.packages }}
+            **Version:** ${{ steps.stats.outputs.version }}
+            **Updated:** ${{ github.event.repository.updated_at }}
+
+            ### Changes
+            This is an automated weekly update to ensure the crypto database stays current.
+
+            ### Usage
+            ```bash
+            # Update your local database
+            cryptodeps db update
+
+            # Or download directly
+            curl -LO https://github.com/csnp/qramm-cryptodeps/releases/download/${{ steps.tag.outputs.tag }}/crypto-database.json
+            ```
+          files: data/crypto-database.json
+          draft: false
+          prerelease: false
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.changes.outputs.changed }}" == "true" ]; then
+            echo "### Database Updated :white_check_mark:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- **Packages:** ${{ steps.stats.outputs.packages }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Release:** ${{ steps.tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### No Updates Needed :information_source:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The database is already up to date." >> $GITHUB_STEP_SUMMARY
+          fi
