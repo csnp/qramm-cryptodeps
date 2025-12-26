@@ -99,10 +99,11 @@ type PackageAnalysis struct {
 
 // DependencyResult represents the analysis result for a dependency.
 type DependencyResult struct {
-	Dependency  Dependency      `json:"dependency" yaml:"dependency"`
-	Analysis    *PackageAnalysis `json:"analysis,omitempty" yaml:"analysis,omitempty"`
-	InDatabase  bool            `json:"inDatabase" yaml:"inDatabase"`
-	Error       string          `json:"error,omitempty" yaml:"error,omitempty"`
+	Dependency   Dependency       `json:"dependency" yaml:"dependency"`
+	Analysis     *PackageAnalysis `json:"analysis,omitempty" yaml:"analysis,omitempty"`
+	InDatabase   bool             `json:"inDatabase" yaml:"inDatabase"`
+	DeepAnalyzed bool             `json:"deepAnalyzed,omitempty" yaml:"deepAnalyzed,omitempty"`
+	Error        string           `json:"error,omitempty" yaml:"error,omitempty"`
 }
 
 // ScanResult represents the complete result of scanning a project.

@@ -5,8 +5,11 @@
 package analyzer
 
 import (
+	"fmt"
+	"os"
 	"time"
 
+	"github.com/csnp/qramm-cryptodeps/internal/analyzer/ondemand"
 	"github.com/csnp/qramm-cryptodeps/internal/database"
 	"github.com/csnp/qramm-cryptodeps/internal/manifest"
 	"github.com/csnp/qramm-cryptodeps/pkg/types"
@@ -14,8 +17,9 @@ import (
 
 // Analyzer analyzes dependencies for cryptographic usage.
 type Analyzer struct {
-	db      *database.Database
-	options Options
+	db       *database.Database
+	options  Options
+	ondemand *ondemand.Analyzer
 }
 
 // Options configures the analyzer behavior.
@@ -28,10 +32,17 @@ type Options struct {
 
 // New creates a new analyzer with the given database and options.
 func New(db *database.Database, opts Options) *Analyzer {
-	return &Analyzer{
+	a := &Analyzer{
 		db:      db,
 		options: opts,
 	}
+
+	// Initialize on-demand analyzer if deep mode is enabled
+	if opts.Deep && !opts.Offline {
+		a.ondemand = ondemand.NewAnalyzer("")
+	}
+
+	return a
 }
 
 // Analyze analyzes dependencies in a manifest file.
@@ -101,7 +112,17 @@ func (a *Analyzer) analyzeDependency(dep types.Dependency) types.DependencyResul
 		return result
 	}
 
-	// TODO: On-demand analysis (Phase 2)
-	// For now, just return without analysis
+	// On-demand analysis
+	if a.ondemand != nil {
+		analysis, err := a.ondemand.Analyze(dep)
+		if err != nil {
+			// Log the error but continue
+			fmt.Fprintf(os.Stderr, "Warning: on-demand analysis failed for %s: %v\n", dep.Name, err)
+			return result
+		}
+		result.Analysis = analysis
+		result.DeepAnalyzed = true
+	}
+
 	return result
 }

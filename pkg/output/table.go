@@ -49,6 +49,10 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 		if dep.Dependency.Version != "" {
 			depName = fmt.Sprintf("%s %s", dep.Dependency.Name, dep.Dependency.Version)
 		}
+		// Add indicator for deep-analyzed packages
+		if dep.DeepAnalyzed {
+			depName = depName + " *"
+		}
 
 		// Truncate if too long
 		if len(depName) > 44 {
@@ -87,9 +91,29 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 		result.Summary.QuantumPartial,
 	)
 
-	// Warning for packages not in database
-	if result.Summary.NotInDatabase > 0 {
-		fmt.Fprintf(w, "⚠ %d packages not in database (use --deep to analyze)\n\n", result.Summary.NotInDatabase)
+	// Count deep-analyzed packages
+	deepAnalyzed := 0
+	notAnalyzed := 0
+	for _, dep := range result.Dependencies {
+		if dep.DeepAnalyzed {
+			deepAnalyzed++
+		} else if !dep.InDatabase && dep.Analysis == nil {
+			notAnalyzed++
+		}
+	}
+
+	// Info for deep-analyzed packages
+	if deepAnalyzed > 0 {
+		fmt.Fprintf(w, "✓ %d packages analyzed via AST (--deep)\n", deepAnalyzed)
+	}
+
+	// Warning for packages not analyzed
+	if notAnalyzed > 0 {
+		fmt.Fprintf(w, "⚠ %d packages not in database (use --deep to analyze)\n", notAnalyzed)
+	}
+
+	if deepAnalyzed > 0 || notAnalyzed > 0 {
+		fmt.Fprintln(w)
 	}
 
 	return nil
