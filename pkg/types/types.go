@@ -58,6 +58,20 @@ type Location struct {
 	Column int    `json:"column,omitempty" yaml:"column,omitempty"`
 }
 
+// Confidence represents how confident we are in the analysis.
+type Confidence string
+
+const (
+	// ConfidenceVerified means manually verified by a human.
+	ConfidenceVerified Confidence = "verified"
+	// ConfidenceHigh means inferred with high confidence from patterns.
+	ConfidenceHigh Confidence = "high"
+	// ConfidenceMedium means inferred with medium confidence.
+	ConfidenceMedium Confidence = "medium"
+	// ConfidenceLow means inferred with low confidence, may be inaccurate.
+	ConfidenceLow Confidence = "low"
+)
+
 // CryptoUsage represents a single cryptographic algorithm usage in a package.
 type CryptoUsage struct {
 	Algorithm   string      `json:"algorithm" yaml:"algorithm"`
@@ -69,6 +83,7 @@ type CryptoUsage struct {
 	InExported  bool        `json:"inExported,omitempty" yaml:"inExported,omitempty"` // whether in exported/public function
 	Function    string      `json:"function,omitempty" yaml:"function,omitempty"` // containing function name
 	Remediation string      `json:"remediation,omitempty" yaml:"remediation,omitempty"` // migration guidance
+	Confidence  Confidence  `json:"confidence,omitempty" yaml:"confidence,omitempty"` // verified, high, medium, low
 }
 
 // AnalysisMetadata contains information about how the analysis was performed.

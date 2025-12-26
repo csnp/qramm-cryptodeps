@@ -51,8 +51,10 @@ jobs:
 
       - name: Generate updated database
         run: |
-          go run cmd/gendb/main.go > data/crypto-database.json
+          go run cmd/gendb/main.go --fetch --timeout=2m > data/crypto-database.json
           echo "Generated database with $(jq '.packages | length' data/crypto-database.json) packages"
+          echo "  Verified: $(jq '.stats.verifiedPackages' data/crypto-database.json)"
+          echo "  Inferred: $(jq '.stats.inferredPackages' data/crypto-database.json)"
 
       - name: Check for changes
         id: changes
