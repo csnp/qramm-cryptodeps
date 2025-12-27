@@ -361,13 +361,13 @@ func sortByRisk(crypto []cryptoDetail) {
 func riskIcon(risk types.QuantumRisk) string {
 	switch risk {
 	case types.RiskVulnerable:
-		return "[!]"
+		return "🔴"
 	case types.RiskPartial:
-		return "[~]"
+		return "🟡"
 	case types.RiskSafe:
-		return "[OK]"
+		return "🟢"
 	default:
-		return "[?]"
+		return "⚪"
 	}
 }
 
