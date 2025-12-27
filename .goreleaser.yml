@@ -107,10 +107,10 @@ changelog:
 # Docker images
 dockers:
   - image_templates:
-      - "ghcr.io/csnp/cryptodeps:{{ .Tag }}"
-      - "ghcr.io/csnp/cryptodeps:v{{ .Major }}"
-      - "ghcr.io/csnp/cryptodeps:v{{ .Major }}.{{ .Minor }}"
-      - "ghcr.io/csnp/cryptodeps:latest"
+      - "ghcr.io/csnp/qramm-cryptodeps:{{ .Tag }}"
+      - "ghcr.io/csnp/qramm-cryptodeps:v{{ .Major }}"
+      - "ghcr.io/csnp/qramm-cryptodeps:v{{ .Major }}.{{ .Minor }}"
+      - "ghcr.io/csnp/qramm-cryptodeps:latest"
     dockerfile: build/Dockerfile
     build_flag_templates:
       - "--pull"
@@ -150,7 +150,7 @@ release:
 
     **Docker:**
     ```bash
-    docker run --rm -v $(pwd):/workspace ghcr.io/csnp/cryptodeps:{{ .Tag }} analyze /workspace
+    docker run --rm -v $(pwd):/workspace ghcr.io/csnp/qramm-cryptodeps:{{ .Tag }} analyze /workspace
     ```
 
   footer: |
