@@ -112,9 +112,16 @@ func (f *TableFormatter) Format(result *types.ScanResult, w io.Writer) error {
 		)
 	}
 
-	// Display detailed remediation for confirmed/vulnerable findings
-	if f.Options.ShowRemediation {
-		f.printDetailedRemediation(w, allCrypto, result.Ecosystem)
+	// Display detailed remediation for vulnerable findings
+	// For reachability-analyzed projects: show CONFIRMED first, then PLANNING
+	// For other projects: show all vulnerable/partial algorithms
+	if hasReachability {
+		if f.Options.ShowRemediation {
+			f.printDetailedRemediation(w, allCrypto, result.Ecosystem)
+		}
+	} else {
+		// Always show remediation for non-reachability projects (Python, npm, Java, etc.)
+		f.printSimpleRemediation(w, allCrypto, result.Ecosystem)
 	}
 
 	// Count deep-analyzed packages
@@ -221,13 +228,84 @@ func (f *TableFormatter) printReachabilityBreakdown(w io.Writer, allCrypto []cry
 func (f *TableFormatter) printSimpleBreakdown(w io.Writer, allCrypto []cryptoDetail) {
 	sortByRisk(allCrypto)
 
-	fmt.Fprintln(w, "CRYPTO ALGORITHMS FOUND:")
-	fmt.Fprintln(w, strings.Repeat("─", 90))
-	fmt.Fprintf(w, "  %-14s %-12s %-12s %s\n", "ALGORITHM", "RISK", "TIMELINE", "DEPENDENCY")
+	// Group by risk level for cleaner output
+	vulnerable := filterByRisk(allCrypto, types.RiskVulnerable)
+	partial := filterByRisk(allCrypto, types.RiskPartial)
+	safe := filterByRisk(allCrypto, types.RiskSafe)
+
+	if len(vulnerable) > 0 {
+		fmt.Fprintln(w, "[!] VULNERABLE - Quantum computers will break these:")
+		fmt.Fprintln(w, strings.Repeat("─", 90))
+		for _, c := range vulnerable {
+			timeline := formatTimelineShort(getTimeline(c.algorithm))
+			effort := formatEffortShort(getEffort(c.algorithm))
+			fmt.Fprintf(w, "  🔴 %-14s %-12s  %-12s  %s\n", c.algorithm, timeline, effort, c.dependency)
+		}
+		fmt.Fprintln(w)
+	}
+
+	if len(partial) > 0 {
+		fmt.Fprintln(w, "[~] PARTIAL RISK - Weakened but usable:")
+		fmt.Fprintln(w, strings.Repeat("─", 90))
+		for _, c := range partial {
+			timeline := formatTimelineShort(getTimeline(c.algorithm))
+			effort := formatEffortShort(getEffort(c.algorithm))
+			fmt.Fprintf(w, "  🟡 %-14s %-12s  %-12s  %s\n", c.algorithm, timeline, effort, c.dependency)
+		}
+		fmt.Fprintln(w)
+	}
+
+	if len(safe) > 0 {
+		fmt.Fprintln(w, "[OK] QUANTUM SAFE:")
+		fmt.Fprintln(w, strings.Repeat("─", 90))
+		for _, c := range safe {
+			fmt.Fprintf(w, "  🟢 %-14s %s\n", c.algorithm, c.dependency)
+		}
+		fmt.Fprintln(w)
+	}
+
+	// Handle unknown risk (not in any of the above categories)
+	unknown := filterByRisk(allCrypto, types.RiskUnknown)
+	if len(unknown) > 0 {
+		fmt.Fprintln(w, "[?] UNKNOWN RISK:")
+		fmt.Fprintln(w, strings.Repeat("─", 90))
+		for _, c := range unknown {
+			fmt.Fprintf(w, "  ⚪ %-14s %s\n", c.algorithm, c.dependency)
+		}
+		fmt.Fprintln(w)
+	}
+}
+
+// printSimpleRemediation prints remediation for non-reachability projects.
+func (f *TableFormatter) printSimpleRemediation(w io.Writer, allCrypto []cryptoDetail, ecosystem types.Ecosystem) {
+	seen := make(map[string]bool)
+	var toRemediate []cryptoDetail
+
+	// Collect all vulnerable and partial algorithms (deduplicated)
 	for _, c := range allCrypto {
-		icon := riskIcon(c.risk)
-		timeline := getTimeline(c.algorithm)
-		fmt.Fprintf(w, "  %s %-12s %-12s %-12s %s\n", icon, c.algorithm, formatRisk(c.risk), timeline, c.dependency)
+		if seen[c.algorithm] {
+			continue
+		}
+		if c.risk == types.RiskVulnerable || c.risk == types.RiskPartial {
+			toRemediate = append(toRemediate, c)
+			seen[c.algorithm] = true
+		}
+	}
+
+	if len(toRemediate) == 0 {
+		return
+	}
+
+	// Sort by risk priority
+	sort.Slice(toRemediate, func(i, j int) bool {
+		return riskPriority(toRemediate[i].risk) > riskPriority(toRemediate[j].risk)
+	})
+
+	fmt.Fprintln(w, "REMEDIATION GUIDANCE:")
+	fmt.Fprintln(w, strings.Repeat("═", 90))
+
+	for _, c := range toRemediate {
+		f.printRemediationItem(w, c, ecosystem)
 	}
 	fmt.Fprintln(w)
 }
@@ -346,6 +424,16 @@ func filterByReachability(crypto []cryptoDetail, reach types.Reachability) []cry
 	var result []cryptoDetail
 	for _, c := range crypto {
 		if c.reachability == reach {
+			result = append(result, c)
+		}
+	}
+	return result
+}
+
+func filterByRisk(crypto []cryptoDetail, risk types.QuantumRisk) []cryptoDetail {
+	var result []cryptoDetail
+	for _, c := range crypto {
+		if c.risk == risk {
 			result = append(result, c)
 		}
 	}
