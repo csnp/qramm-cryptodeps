@@ -153,15 +153,32 @@ CryptoDeps goes beyond simple dependency scanning by analyzing your code's call 
 | Python | `requirements.txt`, `pyproject.toml`, `Pipfile` |
 | Maven | `pom.xml` |
 
+### Workspace & Monorepo Support
+
+CryptoDeps automatically discovers all manifest files in workspaces and monorepos:
+
+- **npm/yarn/pnpm**: Detects `workspaces` in package.json and pnpm-workspace.yaml
+- **Go**: Detects `go.work` files and all `go.mod` in subdirectories
+- **Recursive discovery**: Walks directory tree to find all manifests
+- **Smart filtering**: Skips node_modules, vendor, .git, build directories
+
+```bash
+# Scan entire monorepo - finds all projects automatically
+cryptodeps analyze /path/to/monorepo
+
+# Disable workspace discovery (scan single manifest only)
+cryptodeps analyze /path/to/monorepo --no-workspaces
+```
+
 ### Quantum Risk Classification
 
 Every finding is classified by quantum computing threat level:
 
 | Symbol | Risk Level | Quantum Threat | Examples |
 |--------|------------|----------------|----------|
-| `[!]` | VULNERABLE | Shor's algorithm | RSA, ECDSA, Ed25519, ECDH, DH, DSA |
-| `[~]` | PARTIAL | Grover's algorithm | AES-128, SHA-256, HMAC-SHA256 |
-| `[OK]` | SAFE | Resistant | AES-256, SHA-384+, ChaCha20, Argon2 |
+| 🔴 | VULNERABLE | Shor's algorithm | RSA, ECDSA, Ed25519, ECDH, DH, DSA |
+| 🟡 | PARTIAL | Grover's algorithm | AES-128, SHA-256, HMAC-SHA256 |
+| 🟢 | SAFE | Resistant | AES-256, SHA-384+, ChaCha20, Argon2 |
 
 ### Smart Remediation
 
@@ -209,6 +226,7 @@ Analyze Flags:
       --reachability        Analyze call graph for actual crypto usage (default true, Go only)
       --deep                Force AST analysis for packages not in database
       --offline             Use only local database, skip auto-updates
+      --no-workspaces       Disable workspace discovery (scan single manifest only)
       --risk string         Filter by risk: vulnerable, partial, all
       --min-severity string Minimum severity to report
   -h, --help                Show help
@@ -244,38 +262,43 @@ cryptodeps status
 ## Sample Output
 
 ```
-Scanning go.mod... found 36 dependencies
+[*] Scanning go.mod... found 36 dependencies
 
-CONFIRMED - Actually used by your code (requires action):
+[!] CONFIRMED - Actually used by your code (requires action):
 ──────────────────────────────────────────────────────────────────────────────────────────
-  [!] Ed25519        VULNERABLE    [short-term]  Effort: Low (simple change)
+  🔴 Ed25519        VULNERABLE    1-2yr         low
      └─ golang.org/x/crypto@v0.31.0
         > Called from: crypto.GenerateEd25519KeyPair
         > Called from: crypto.SignMessage
 
-  [~] HS256          PARTIAL       [medium-term]  Effort: Low (simple change)
+  🟡 HS256          PARTIAL       -             low
      └─ github.com/golang-jwt/jwt/v5@v5.3.0
         > Called from: auth.JWTService.GenerateAccessToken
 
-AVAILABLE - In dependencies but not called (lower priority):
+  🟢 bcrypt         SAFE          -             -
+     └─ golang.org/x/crypto@v0.31.0
+        > Called from: auth.HashPassword
+
+[.] AVAILABLE - In dependencies but not called (lower priority):
 ──────────────────────────────────────────────────────────────────────────────────────────
   golang.org/x/crypto@v0.31.0
-     └─ [!] X25519, [OK] ChaCha20-Poly1305, [OK] Argon2
+     └─ 🔴 X25519, 🟢 ChaCha20-Poly1305, 🟢 Argon2
 
 ══════════════════════════════════════════════════════════════════════════════════════════
 SUMMARY: 36 deps | 2 with crypto | 8 vulnerable | 2 partial
-REACHABILITY: 2 confirmed | 0 reachable | 11 available-only
+REACHABILITY: 3 confirmed | 0 reachable | 11 available-only
 
-REMEDIATION - Action Required:
+REMEDIATION GUIDANCE:
 ══════════════════════════════════════════════════════════════════════════════════════════
 
-[!] Ed25519
+🔴 Ed25519 [PRIORITY]
 ──────────────────────────────────────────────────
-  Action:      Plan migration to ML-DSA; prioritize if signing long-lived data
-  Replace:     ML-DSA-65 (FIPS 204)
-  Timeline:    Short-term (1-2 years)
-  Effort:      Low (simple change)
-  Libraries:   github.com/cloudflare/circl/sign/mldsa
+  Action:       Plan migration to ML-DSA; prioritize if signing long-lived data
+  Replace with: ML-DSA-65 (FIPS 204)
+  NIST:         FIPS 204
+  Timeline:     Short-term (1-2 years)
+  Effort:       Low (simple change)
+  Libraries:    github.com/cloudflare/circl/sign/mldsa
 ```
 
 ---
@@ -424,7 +447,7 @@ qramm-cryptodeps/
 
 ## Roadmap
 
-### v1.0 (Current Release)
+### v1.2 (Current Release)
 
 - [x] Multi-ecosystem dependency scanning (Go, npm, Python, Maven)
 - [x] Reachability analysis for Go projects
@@ -433,8 +456,10 @@ qramm-cryptodeps/
 - [x] Smart remediation guidance with NIST references
 - [x] GitHub repository URL scanning
 - [x] Curated database of 1,100+ packages
+- [x] Workspace & monorepo support (npm, pnpm, Go workspaces)
+- [x] Multi-project aggregated results
 
-### v1.1 (Next)
+### v1.3 (Next)
 
 - [ ] Improved reachability for npm/Python projects
 - [ ] Transitive dependency crypto inheritance

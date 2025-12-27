@@ -5,6 +5,25 @@ All notable changes to QRAMM CryptoDeps will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-12-27
+
+### Added
+- **Workspace & monorepo support**: Automatically discovers all manifest files in project directories
+  - npm/yarn workspaces via `package.json` workspaces field
+  - pnpm workspaces via `pnpm-workspace.yaml`
+  - Go workspaces via `go.work` files
+  - Recursive directory walking with smart filtering (skips node_modules, vendor, .git, etc.)
+- **Multi-project output**: Aggregated results across all discovered projects
+- **`--no-workspaces` flag**: Disable workspace discovery for single-manifest scanning
+
+### Changed
+- **Output formatting**: Clean, professional terminal design with colored status indicators
+  - 🔴 Vulnerable (quantum-broken by Shor's algorithm)
+  - 🟡 Partial risk (weakened by Grover's algorithm)
+  - 🟢 Safe (quantum-resistant)
+- Improved remediation guidance layout with aligned fields
+- Call trace formatting now uses `>` prefix for cleaner output
+
 ## [1.1.0] - 2025-12-26
 
 ### Added
@@ -42,5 +61,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maps findings to CNSA 2.0 compliance requirements
 - Supports OMB M-23-02 cryptographic inventory requirements
 
+[1.2.0]: https://github.com/csnp/qramm-cryptodeps/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/csnp/qramm-cryptodeps/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/csnp/qramm-cryptodeps/releases/tag/v1.0.0
