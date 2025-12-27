@@ -6,6 +6,8 @@ package manifest
 import (
 	"encoding/xml"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/csnp/qramm-cryptodeps/pkg/types"
 )
@@ -25,11 +27,42 @@ func (p *MavenParser) Filenames() []string {
 
 // pomXML represents the structure of a pom.xml file.
 type pomXML struct {
-	XMLName      xml.Name       `xml:"project"`
-	GroupID      string         `xml:"groupId"`
-	ArtifactID   string         `xml:"artifactId"`
-	Version      string         `xml:"version"`
+	XMLName      xml.Name        `xml:"project"`
+	GroupID      string          `xml:"groupId"`
+	ArtifactID   string          `xml:"artifactId"`
+	Version      string          `xml:"version"`
+	Properties   pomProperties   `xml:"properties"`
 	Dependencies pomDependencies `xml:"dependencies"`
+}
+
+// pomProperties captures all property elements as a map
+type pomProperties struct {
+	Entries map[string]string
+}
+
+// UnmarshalXML implements xml.Unmarshaler for pomProperties
+func (p *pomProperties) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	p.Entries = make(map[string]string)
+
+	for {
+		token, err := d.Token()
+		if err != nil {
+			return err
+		}
+
+		switch t := token.(type) {
+		case xml.StartElement:
+			var value string
+			if err := d.DecodeElement(&value, &t); err != nil {
+				return err
+			}
+			p.Entries[t.Name.Local] = value
+		case xml.EndElement:
+			if t.Name == start.Name {
+				return nil
+			}
+		}
+	}
 }
 
 type pomDependencies struct {
@@ -44,6 +77,35 @@ type pomDependency struct {
 	Optional   string `xml:"optional"`
 }
 
+// propertyPattern matches Maven property references like ${property.name}
+var propertyPattern = regexp.MustCompile(`\$\{([^}]+)\}`)
+
+// resolveProperties replaces ${property} placeholders with their values
+func resolveProperties(value string, props map[string]string) string {
+	if props == nil {
+		return value
+	}
+
+	return propertyPattern.ReplaceAllStringFunc(value, func(match string) string {
+		// Extract property name from ${...}
+		propName := strings.TrimPrefix(strings.TrimSuffix(match, "}"), "${")
+
+		// Handle nested dots (e.g., project.version -> check both forms)
+		if resolved, ok := props[propName]; ok {
+			return resolved
+		}
+
+		// Try with dots converted to hyphens (some Maven conventions)
+		hyphenName := strings.ReplaceAll(propName, ".", "-")
+		if resolved, ok := props[hyphenName]; ok {
+			return resolved
+		}
+
+		// Return original if not found
+		return match
+	})
+}
+
 // Parse parses a pom.xml file and returns the list of dependencies.
 func (p *MavenParser) Parse(path string) ([]types.Dependency, error) {
 	data, err := os.ReadFile(path)
@@ -56,6 +118,16 @@ func (p *MavenParser) Parse(path string) ([]types.Dependency, error) {
 		return nil, err
 	}
 
+	// Build property map including project properties
+	props := pom.Properties.Entries
+	if props == nil {
+		props = make(map[string]string)
+	}
+	// Add project.version as a property
+	if pom.Version != "" {
+		props["project.version"] = pom.Version
+	}
+
 	var deps []types.Dependency
 
 	for _, dep := range pom.Dependencies.Dependency {
@@ -65,9 +137,12 @@ func (p *MavenParser) Parse(path string) ([]types.Dependency, error) {
 		// Construct Maven coordinate name
 		name := dep.GroupID + ":" + dep.ArtifactID
 
+		// Resolve property placeholders in version
+		version := resolveProperties(dep.Version, props)
+
 		deps = append(deps, types.Dependency{
 			Name:      name,
-			Version:   dep.Version,
+			Version:   version,
 			Ecosystem: types.EcosystemMaven,
 			Direct:    !isTest, // Mark test deps as not direct for now
 		})

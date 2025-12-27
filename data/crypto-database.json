@@ -19387,35 +19387,11 @@
       "ecosystem": "npm",
       "analysis": {
         "date": "2025-12-26T19:10:13.132255639Z",
-        "method": "inferred",
+        "method": "verified",
         "tool": "cryptodeps",
         "toolVersion": ""
       },
       "crypto": [
-        {
-          "algorithm": "ECDSA",
-          "type": "signature",
-          "quantumRisk": "VULNERABLE",
-          "severity": "HIGH",
-          "location": {
-            "file": "",
-            "line": 0
-          },
-          "remediation": "Migrate to ML-DSA (FIPS 204) or SLH-DSA (FIPS 205) for signatures",
-          "confidence": "high"
-        },
-        {
-          "algorithm": "ECDH",
-          "type": "key-exchange",
-          "quantumRisk": "VULNERABLE",
-          "severity": "HIGH",
-          "location": {
-            "file": "",
-            "line": 0
-          },
-          "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange",
-          "confidence": "medium"
-        },
         {
           "algorithm": "Ed25519",
           "type": "signature",
@@ -19425,8 +19401,8 @@
             "file": "",
             "line": 0
           },
-          "remediation": "Migrate to ML-DSA (FIPS 204) or SLH-DSA (FIPS 205) for signatures",
-          "confidence": "high"
+          "remediation": "Migrate to ML-DSA (FIPS 204) for signatures",
+          "confidence": "verified"
         },
         {
           "algorithm": "X25519",
@@ -19438,49 +19414,14 @@
             "line": 0
           },
           "remediation": "Migrate to ML-KEM (FIPS 203) for key exchange",
-          "confidence": "high"
-        },
-        {
-          "algorithm": "RSA",
-          "type": "encryption",
-          "quantumRisk": "VULNERABLE",
-          "severity": "HIGH",
-          "location": {
-            "file": "",
-            "line": 0
-          },
-          "remediation": "Migrate to ML-KEM (FIPS 203) for encryption or ML-DSA (FIPS 204) for signatures",
-          "confidence": "high"
-        },
-        {
-          "algorithm": "AES",
-          "type": "encryption",
-          "quantumRisk": "PARTIAL",
-          "severity": "MEDIUM",
-          "location": {
-            "file": "",
-            "line": 0
-          },
-          "remediation": "Use AES-256 for 128-bit post-quantum security",
-          "confidence": "high"
-        },
-        {
-          "algorithm": "ChaCha20-Poly1305",
-          "type": "encryption",
-          "quantumRisk": "UNKNOWN",
-          "severity": "INFO",
-          "location": {
-            "file": "",
-            "line": 0
-          },
-          "confidence": "high"
+          "confidence": "verified"
         }
       ],
       "quantumSummary": {
-        "vulnerable": 5,
-        "partial": 1,
+        "vulnerable": 2,
+        "partial": 0,
         "safe": 0,
-        "unknown": 1
+        "unknown": 0
       }
     },
     {

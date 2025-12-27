@@ -157,6 +157,20 @@ var remediationDB = map[string]Remediation{
 	},
 
 	// Symmetric Encryption - Partial vulnerability (Grover's algorithm)
+	"AES": {
+		Summary:      "Ensure AES-256 key size for quantum resistance",
+		Replacement:  "AES-256-GCM",
+		NISTStandard: "",
+		Timeline:     "short-term",
+		Effort:       "low",
+		Libraries: map[types.Ecosystem][]string{
+			types.EcosystemGo:    {"crypto/aes (256-bit keys)"},
+			types.EcosystemNPM:   {"crypto (256-bit keys)", "@noble/ciphers"},
+			types.EcosystemPyPI:  {"cryptography (AES-256)", "pycryptodome"},
+			types.EcosystemMaven: {"org.bouncycastle:bcprov-jdk18on"},
+		},
+		Notes: "AES with 256-bit keys provides 128-bit post-quantum security (Grover's halves effective strength). AES-128 is reduced to 64-bit security and should be upgraded. Verify your implementation uses AES-256.",
+	},
 	"AES-128": {
 		Summary:      "Increase to AES-256 for quantum resistance",
 		Replacement:  "AES-256",
@@ -398,6 +412,260 @@ var remediationDB = map[string]Remediation{
 		Effort:       "low",
 		Notes:        "Enable PQC hybrid mode in your TLS configuration. Supported by major browsers.",
 	},
+
+	// Authenticated Encryption - Quantum-safe with 256-bit keys
+	"ChaCha20-Poly1305": {
+		Summary:      "Already quantum-safe (256-bit key)",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "ChaCha20-Poly1305 with 256-bit keys provides 128-bit post-quantum security.",
+	},
+	"AES-GCM": {
+		Summary:      "Ensure AES-256-GCM for quantum resistance",
+		Replacement:  "AES-256-GCM",
+		NISTStandard: "",
+		Timeline:     "short-term",
+		Effort:       "low",
+		Libraries: map[types.Ecosystem][]string{
+			types.EcosystemGo:    {"crypto/aes + crypto/cipher"},
+			types.EcosystemNPM:   {"crypto", "@noble/ciphers"},
+			types.EcosystemPyPI:  {"cryptography", "pycryptodome"},
+			types.EcosystemMaven: {"org.bouncycastle:bcprov-jdk18on"},
+		},
+		Notes: "AES-GCM with 256-bit keys provides 128-bit post-quantum security. Verify key size is 256 bits.",
+	},
+	"A256GCM": {
+		Summary:      "Already quantum-safe (256-bit key)",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "A256GCM uses AES-256-GCM which provides 128-bit post-quantum security.",
+	},
+
+	// MAC Functions - Quantum-safe
+	"HMAC": {
+		Summary:      "Already quantum-safe with strong hash function",
+		Replacement:  "No change needed (use HMAC-SHA256 or stronger)",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "HMAC with SHA-256 or stronger provides adequate post-quantum security for authentication.",
+	},
+	"HMAC-SHA256": {
+		Summary:      "Already quantum-safe",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "HMAC-SHA256 provides 128-bit post-quantum security for authentication.",
+	},
+	"HMAC-SHA512": {
+		Summary:      "Already quantum-safe",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "HMAC-SHA512 provides strong post-quantum security for authentication.",
+	},
+	"HMAC-SHA1": {
+		Summary:      "Upgrade to HMAC-SHA256 or stronger",
+		Replacement:  "HMAC-SHA256",
+		NISTStandard: "",
+		Timeline:     "medium-term",
+		Effort:       "low",
+		Notes:        "HMAC-SHA1 is still secure for authentication but SHA-1 is deprecated. Upgrade when convenient.",
+	},
+	"Poly1305": {
+		Summary:      "Already quantum-safe (use with ChaCha20 or XSalsa20)",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "Poly1305 is a secure MAC that provides adequate post-quantum authentication security.",
+	},
+
+	// Stream Ciphers - Quantum-safe with 256-bit keys
+	"XSalsa20": {
+		Summary:      "Already quantum-safe (256-bit key)",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "XSalsa20 with 256-bit keys provides 128-bit post-quantum security.",
+	},
+	"XSalsa20-Poly1305": {
+		Summary:      "Already quantum-safe (256-bit key)",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "XSalsa20-Poly1305 (NaCl secretbox) provides authenticated encryption with 128-bit post-quantum security.",
+	},
+
+	// Post-Quantum Algorithms - Already quantum-safe
+	"ML-KEM": {
+		Summary:      "Already quantum-safe (NIST standardized)",
+		Replacement:  "No change needed",
+		NISTStandard: "FIPS 203",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "ML-KEM (Kyber) is NIST-standardized post-quantum key encapsulation. You're already quantum-ready!",
+	},
+	"ML-DSA": {
+		Summary:      "Already quantum-safe (NIST standardized)",
+		Replacement:  "No change needed",
+		NISTStandard: "FIPS 204",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "ML-DSA (Dilithium) is NIST-standardized post-quantum digital signature. You're already quantum-ready!",
+	},
+
+	// NIST Elliptic Curves - Vulnerable to Shor's algorithm
+	"P-256": {
+		Summary:      "Migrate to ML-DSA for signatures or ML-KEM for key exchange",
+		Replacement:  "ML-DSA-65 (signatures) or ML-KEM-768 (key exchange)",
+		NISTStandard: "FIPS 203/204",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Libraries: map[types.Ecosystem][]string{
+			types.EcosystemGo:    {"github.com/cloudflare/circl"},
+			types.EcosystemNPM:   {"@noble/post-quantum"},
+			types.EcosystemPyPI:  {"pqcrypto", "liboqs-python"},
+			types.EcosystemMaven: {"org.bouncycastle:bcprov-jdk18on"},
+		},
+		Notes: "P-256 (secp256r1/prime256v1) is vulnerable to Shor's algorithm.",
+	},
+	"P-384": {
+		Summary:      "Migrate to ML-DSA for signatures or ML-KEM for key exchange",
+		Replacement:  "ML-DSA-65 (signatures) or ML-KEM-768 (key exchange)",
+		NISTStandard: "FIPS 203/204",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Notes:        "P-384 (secp384r1) is vulnerable to Shor's algorithm.",
+	},
+	"P-521": {
+		Summary:      "Migrate to ML-DSA for signatures or ML-KEM for key exchange",
+		Replacement:  "ML-DSA-87 (signatures) or ML-KEM-1024 (key exchange)",
+		NISTStandard: "FIPS 203/204",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Notes:        "P-521 (secp521r1) is vulnerable to Shor's algorithm.",
+	},
+	"secp256k1": {
+		Summary:      "Migrate to ML-DSA for signatures",
+		Replacement:  "ML-DSA-65",
+		NISTStandard: "FIPS 204",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Notes:        "secp256k1 (Bitcoin curve) is vulnerable to Shor's algorithm. Critical for blockchain applications.",
+	},
+
+	// RSA Variants
+	"PS256": {
+		Summary:      "Wait for PQ-JWT standards; use HS256/HS512 if symmetric signing is acceptable",
+		Replacement:  "HS256/HS512 (now) or PQ-JWT algorithms (when standardized)",
+		NISTStandard: "FIPS 204",
+		Timeline:     "short-term",
+		Effort:       "low",
+		Notes:        "RSA-PSS (PS256) is quantum-vulnerable. For short-lived tokens, monitor IETF PQ-JWT working group.",
+	},
+	"PS384": {
+		Summary:      "Wait for PQ-JWT standards; use HS384/HS512 if symmetric signing is acceptable",
+		Replacement:  "HS384/HS512 (now) or PQ-JWT algorithms (when standardized)",
+		NISTStandard: "FIPS 204",
+		Timeline:     "short-term",
+		Effort:       "low",
+		Notes:        "RSA-PSS (PS384) is quantum-vulnerable. For short-lived tokens, monitor IETF PQ-JWT working group.",
+	},
+	"PS512": {
+		Summary:      "Wait for PQ-JWT standards; use HS512 if symmetric signing is acceptable",
+		Replacement:  "HS512 (now) or PQ-JWT algorithms (when standardized)",
+		NISTStandard: "FIPS 204",
+		Timeline:     "short-term",
+		Effort:       "low",
+		Notes:        "RSA-PSS (PS512) is quantum-vulnerable. For short-lived tokens, monitor IETF PQ-JWT working group.",
+	},
+	"RSA-OAEP": {
+		Summary:      "Migrate to ML-KEM for key encapsulation",
+		Replacement:  "ML-KEM-768 or ML-KEM-1024",
+		NISTStandard: "FIPS 203",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Notes:        "RSA-OAEP is quantum-vulnerable for key transport. Use ML-KEM for post-quantum key encapsulation.",
+	},
+	"RSA-PSS": {
+		Summary:      "Migrate to ML-DSA for digital signatures",
+		Replacement:  "ML-DSA-65 or ML-DSA-87",
+		NISTStandard: "FIPS 204",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Notes:        "RSA-PSS is quantum-vulnerable for signatures. Use ML-DSA for post-quantum signatures.",
+	},
+
+	// ECDH Variants
+	"ECDH-ES": {
+		Summary:      "Migrate to ML-KEM or hybrid ECDH+ML-KEM",
+		Replacement:  "ML-KEM-768",
+		NISTStandard: "FIPS 203",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Notes:        "ECDH-ES (Ephemeral-Static) is quantum-vulnerable. Use ML-KEM for JWE key agreement.",
+	},
+
+	// Modern Hash Functions - Quantum-safe
+	"BLAKE2b": {
+		Summary:      "Already quantum-safe",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "BLAKE2b provides strong post-quantum collision resistance.",
+	},
+	"BLAKE2s": {
+		Summary:      "Already quantum-safe",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "BLAKE2s provides strong post-quantum collision resistance.",
+	},
+	"BLAKE3": {
+		Summary:      "Already quantum-safe",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "BLAKE3 provides strong post-quantum collision resistance.",
+	},
+
+	// Chinese National Algorithms (GB/T standards)
+	"SM2": {
+		Summary:      "Migrate to ML-DSA for signatures or ML-KEM for key exchange",
+		Replacement:  "ML-DSA-65 (signatures) or ML-KEM-768 (key exchange)",
+		NISTStandard: "FIPS 203/204",
+		Timeline:     "immediate",
+		Effort:       "medium",
+		Notes:        "SM2 (Chinese elliptic curve) is vulnerable to Shor's algorithm.",
+	},
+	"SM3": {
+		Summary:      "Already quantum-safe (256-bit hash)",
+		Replacement:  "No change needed",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "SM3 is a 256-bit hash providing adequate post-quantum collision resistance.",
+	},
+	"SM4": {
+		Summary:      "Already quantum-safe (128-bit block cipher)",
+		Replacement:  "No change needed (consider AES-256 for compatibility)",
+		NISTStandard: "",
+		Timeline:     "none",
+		Effort:       "none",
+		Notes:        "SM4 is a 128-bit block cipher. Similar quantum properties to AES-128.",
+	},
 }
 
 // GetDetailedRemediation returns comprehensive remediation guidance for an algorithm.
@@ -417,36 +685,83 @@ func GetDetailedRemediation(algorithm string, cryptoType string, ecosystem types
 		contains string
 		key      string
 	}{
+		// Post-quantum algorithms (check first)
+		{"ML-KEM", "ML-KEM"},
+		{"MLKEM", "ML-KEM"},
+		{"ML-DSA", "ML-DSA"},
+		{"MLDSA", "ML-DSA"},
+		{"SLH-DSA", "SLH-DSA"},
+		{"SLHDSA", "SLH-DSA"},
+		// Key exchange
+		{"RSA-OAEP", "RSA-OAEP"},
+		{"RSA-PSS", "RSA-PSS"},
 		{"RSA", "RSA"},
-		{"ECDSA", "ECDSA"},
+		{"ECDH-ES", "ECDH-ES"},
 		{"ECDH", "ECDH"},
+		{"ECDSA", "ECDSA"},
 		{"ED25519", "Ed25519"},
 		{"ED448", "Ed448"},
 		{"X25519", "X25519"},
 		{"CURVE25519", "X25519"},
 		{"DIFFIE-HELLMAN", "DH"},
+		// NIST curves
+		{"SECP256K1", "secp256k1"},
+		{"P-521", "P-521"},
+		{"P-384", "P-384"},
+		{"P-256", "P-256"},
+		// Symmetric encryption
+		{"A256GCM", "A256GCM"},
+		{"AES-256-GCM", "AES-256"},
+		{"AES-GCM", "AES-GCM"},
 		{"AES-256", "AES-256"},
 		{"AES-128", "AES-128"},
 		{"AES-192", "AES-192"},
+		{"AES", "AES"},
+		{"CHACHA20-POLY1305", "ChaCha20-Poly1305"},
+		{"CHACHA20POLY1305", "ChaCha20-Poly1305"},
 		{"CHACHA20", "ChaCha20"},
 		{"CHACHA", "ChaCha20"},
+		{"XSALSA20-POLY1305", "XSalsa20-Poly1305"},
+		{"XSALSA20POLY1305", "XSalsa20-Poly1305"},
+		{"XSALSA20", "XSalsa20"},
 		{"3DES", "3DES"},
 		{"TRIPLE-DES", "3DES"},
 		{"TRIPLEDES", "3DES"},
 		{"BLOWFISH", "Blowfish"},
+		{"DES", "DES"},
+		// Chinese algorithms
+		{"SM2", "SM2"},
+		{"SM3", "SM3"},
+		{"SM4", "SM4"},
+		// Hash functions
+		{"BLAKE3", "BLAKE3"},
+		{"BLAKE2B", "BLAKE2b"},
+		{"BLAKE2S", "BLAKE2s"},
 		{"SHA-512", "SHA-512"},
 		{"SHA512", "SHA-512"},
 		{"SHA-384", "SHA-384"},
 		{"SHA384", "SHA-384"},
 		{"SHA-256", "SHA-256"},
 		{"SHA256", "SHA-256"},
+		{"SHA3-256", "SHA3-256"},
 		{"SHA-1", "SHA-1"},
 		{"SHA1", "SHA-1"},
 		{"MD5", "MD5"},
+		// MACs
+		{"HMAC-SHA512", "HMAC-SHA512"},
+		{"HMAC-SHA256", "HMAC-SHA256"},
+		{"HMAC-SHA1", "HMAC-SHA1"},
+		{"HMAC", "HMAC"},
+		{"POLY1305", "Poly1305"},
+		// Password hashing
 		{"BCRYPT", "bcrypt"},
 		{"SCRYPT", "scrypt"},
 		{"ARGON2", "Argon2"},
 		{"PBKDF2", "PBKDF2"},
+		// JWT algorithms
+		{"PS256", "PS256"},
+		{"PS384", "PS384"},
+		{"PS512", "PS512"},
 		{"RS256", "RS256"},
 		{"RS384", "RS384"},
 		{"RS512", "RS512"},
@@ -458,7 +773,6 @@ func GetDetailedRemediation(algorithm string, cryptoType string, ecosystem types
 		{"HS512", "HS512"},
 		{"EDDSA", "EdDSA"},
 		{"DSA", "DSA"},
-		{"DES", "DES"},
 	}
 
 	for _, p := range patterns {
